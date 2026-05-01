@@ -2,11 +2,11 @@
   <!-- Package configuration -->
   <PropertyGroup>
     <Company>Herve-M</Company>
-    <Product>net-template</Product>
+    <Product>net-ssms-mcp</Product>
     <Authors>Herve MATYSIAK</Authors>
-    <RepositoryUrl>https://github.com/Herve-M/net-template</RepositoryUrl>
+    <RepositoryUrl>https://github.com/Herve-M/net-ssms-mcp</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageProjectUrl>https://github.com/Herve-M/net-template</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/Herve-M/net-ssms-mcp</PackageProjectUrl>
   </PropertyGroup>
 
   <!-- Language configuration -->
