@@ -1,4 +1,4 @@
-namespace Server.Api;
+namespace ssmsmcp.Server.Api;
 
 public class WeatherForecast
 {

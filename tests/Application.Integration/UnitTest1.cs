@@ -1,4 +1,4 @@
-namespace Application.Integration;
+namespace ssmsmcp.Application.Integration;
 
 public class UnitTest1
 {
