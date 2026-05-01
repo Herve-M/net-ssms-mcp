@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path=".gitattributes" />
+    <File Path=".gitignore" />
+    <File Path=".vsconfig" />
+    <File Path="extensions.vsext" />
+    <File Path="global.json" />
+    <File Path="LICENSE" />
+  </Folder>
+  <Project Path="src/cli/cli.csproj" />
+</Solution>

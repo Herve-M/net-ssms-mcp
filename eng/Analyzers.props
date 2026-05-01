@@ -1,0 +1,20 @@
+<Project>
+  <PropertyGroup>
+    <AnalysisLevel>10.0-recommended</AnalysisLevel>
+    <InvariantGlobalization>false</InvariantGlobalization>
+    
+    <!-- Disable old FxCop/CA0507  -->
+    <RunCodeAnalysis>false</RunCodeAnalysis> 
+
+    <!-- Avoid warning -->
+    <_SkipUpgradeNetAnalyzersNuGetWarning>true</_SkipUpgradeNetAnalyzersNuGetWarning>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <GlobalAnalyzerConfigFiles Include="$(MSBuildThisFileDirectory)CodeAnalysis.src.globalconfig" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(IsTestProject)' == 'true'">
+    <GlobalAnalyzerConfigFiles Remove="$(MSBuildThisFileDirectory)CodeAnalysis.src.globalconfig" />
+    <GlobalAnalyzerConfigFiles Include="$(MSBuildThisFileDirectory)CodeAnalysis.test.globalconfig" />
+  </ItemGroup>
+</Project>

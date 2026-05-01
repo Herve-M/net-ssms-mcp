@@ -1,0 +1,10 @@
+{
+    "recommendations": [
+        "esbenp.prettier-vscode",
+        "redhat.vscode-yaml",
+        "darkriszty.markdown-table-prettify",
+        "yzhang.markdown-all-in-one",
+        "ms-dotnettools.csdevkit",
+        "ms-vscode-remote.vscode-remote-extensionpack"
+    ]
+}

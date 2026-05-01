@@ -1,0 +1,25 @@
+<Project>
+  <!-- Package configuration -->
+  <PropertyGroup>
+    <Company>Herve-M</Company>
+    <Product>net-template</Product>
+    <Authors>Herve MATYSIAK</Authors>
+    <RepositoryUrl>https://github.com/Herve-M/net-template</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageProjectUrl>https://github.com/Herve-M/net-template</PackageProjectUrl>
+  </PropertyGroup>
+
+  <!-- Language configuration -->
+  <PropertyGroup>
+    <LangVersion>14.0</LangVersion>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+
+  <!-- Build configuration -->
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+  </PropertyGroup>
+</Project>

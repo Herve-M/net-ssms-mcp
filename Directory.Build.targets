@@ -1,0 +1,9 @@
+<Project>
+  <PropertyGroup>
+    <!--
+    For non-SDK projects that import this file and then import Microsoft.Common.targets,
+    tell Microsoft.Common.targets not to import Directory.Build.targets again
+    -->
+    <ImportDirectoryBuildTargets>false</ImportDirectoryBuildTargets>
+  </PropertyGroup>
+</Project>
