@@ -6,7 +6,43 @@
 
 version: 2
 updates:
- - package-ecosystem: "devcontainers"
-   directory: "/.devcontainer"
-   schedule:
-     interval: quarterly
+  - package-ecosystem: "devcontainers"
+    directory: "/.devcontainer"
+    schedule:
+      interval: quarterly
+      timezone: "Asia/Ho_Chi_Minh"
+    assignees:
+      - "Herve-M"
+
+  - package-ecosystem: "github-actions"
+    directory: "/.github/workflows"
+    schedule:
+      interval: "monthly"
+      timezone: "Asia/Ho_Chi_Minh"
+    assignees:
+      - "Herve-M"
+
+  - package-ecosystem: "dotnet-sdk"
+    directory: "/"
+    schedule:
+      interval: quarterly
+      timezone: "Asia/Ho_Chi_Minh"
+    assignees:
+      - "Herve-M"
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-major"
+          - "version-update:semver-minor"
+
+  - package-ecosystem: "nuget"
+    directory: "/"
+    schedule:
+      interval: monthly
+      timezone: "Asia/Ho_Chi_Minh"
+    assignees:
+      - "Herve-M"
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-major"

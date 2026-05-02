@@ -1,10 +1,23 @@
 {
-    "editor.defaultFormatter": "ms-dotnettools.csharp",
-    "files.trimTrailingWhitespace": true,
-    "files.associations": {
-        "*.*proj": "xml",
-        "*.props": "xml",
-        "*.targets": "xml",
-        "*.tasks": "xml"
-    },
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "[csharp]": {
+    "editor.defaultFormatter": "ms-dotnettools.csharp"
+  },
+  "[json]": {
+    "prettier.tabWidth": 4
+  },
+  "[yaml]": {
+    "editor.insertSpaces": true,
+    "editor.tabSize": 2,
+    "editor.autoIndent": "full"
+  },
+  "files.trimTrailingWhitespace": true,
+  "files.associations": {
+    "*.*proj": "xml",
+    "*.props": "xml",
+    "*.targets": "xml",
+    "*.tasks": "xml",
+    ".github/workflows/**/*.yml": "vscode-github-actions"
+  }
 }

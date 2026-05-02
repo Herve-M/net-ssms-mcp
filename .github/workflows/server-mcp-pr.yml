@@ -1,0 +1,57 @@
+name: server-mcp-pr
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths-ignore:
+      - src/Server.Api/**
+      - .devcontainer/**
+      - .vscode/**
+      - .idea/**
+      - docs/**
+      - README.md
+
+env:
+  DOTNET_NOLOGO: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    permissions:
+      pull-requests: write
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v6.0.2
+
+      - name: "Setup .NET"
+        uses: actions/setup-dotnet@v5.2.0
+        with:
+          dotnet-version: 10.0.x
+
+      #TODO: find a up to date dotnet format action that supports recent updates
+      # - name: "dotnet format"
+      #   uses: jfversluis/dotnet-format@v1.0.9
+      #   with:
+      #     action: check
+      #     only-changed-files: true
+      #     fail-fast: true
+      #     repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: "Dependency review"
+        uses: actions/dependency-review-action@v4
+        with:
+          license-check: true
+          vulnerability-check: true
+          comment-summary-in-pr: on-failure
+
+      - name: "Restore dependencies"
+        run: dotnet restore
+
+      - name: "Restore tools"
+        run: dotnet tool restore
+
+      - name: "Build server-mcp"
+        run: dotnet build src/Server.Mcp/Server.Mcp.csproj -c Release --no-restore

@@ -1,0 +1,21 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path=".gitattributes" />
+    <File Path=".gitignore" />
+    <File Path=".vsconfig" />
+    <File Path="global.json" />
+    <File Path="LICENSE" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/Application/Application.csproj" />
+    <Project Path="src/Domain/Domain.csproj" />
+    <Project Path="src/Infrastructure/Infrastructure.csproj" />
+    <Project Path="src/Server.Api/Server.Api.csproj" />
+    <Project Path="src/Server.Mcp/Server.Mcp.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Application.Integration/Application.Integration.csproj" />
+    <Project Path="tests/Infrastructure.Integration/Infrastructure.Integration.csproj" />
+  </Folder>
+</Solution>
