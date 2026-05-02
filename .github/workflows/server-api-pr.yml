@@ -34,7 +34,6 @@ jobs:
           action: check
           only-changed-files: true
           fail-fast: true
-          workspace: ssms-mcp.slnx
 
       - name: "Dependency review"
         uses: actions/dependency-review-action@v4
