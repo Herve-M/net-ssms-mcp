@@ -5,6 +5,10 @@ on:
     branches:
       - main
     paths-ignore:
+      - src/Server.Mcp/**
+      - .devcontainer/**
+      - .vscode/**
+      - .idea/**
       - docs/**
       - README.md
 
@@ -42,7 +46,7 @@ jobs:
         with:
           license-check: true
           vulnerability-check: true
-          comment-summary-in-pr: always
+          comment-summary-in-pr: on-failure
 
       - name: "Restore dependencies"
         run: dotnet restore
