@@ -8,9 +8,8 @@ on:
     branches:
       - main
     paths-ignore:
-      - '**/*.md'
-      - '**/*.txt'
-      
+      - "**/*.md"
+
 jobs:
   analyze:
     name: Analyze
@@ -24,15 +23,21 @@ jobs:
       matrix:
         include:
           - language: csharp
-            build-mode: manual
+            build-mode: autobuild
     steps:
       - uses: actions/checkout@v6
+
+      - name: "Setup .NET"
+        uses: actions/setup-dotnet@v5.2.0
+        with:
+          dotnet-version: 10.0.x
+          dotnet-channel: LTS
+      
       - uses: github/codeql-action/init@v4
         with:
           languages: ${{ matrix.language }}
           build-mode: ${{ matrix.build-mode }}
-      - uses: actions/setup-dotnet@v5
-      - run: dotnet build
+
       - uses: github/codeql-action/analyze@v4
         with:
           category: /language:${{ matrix.language }}
