@@ -1,0 +1,22 @@
+<Project Sdk="Aspire.AppHost.Sdk/13.3.0">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <UserSecretsId>362e0ab0-6e6f-4f6c-8080-2745986c0786</UserSecretsId>
+        <RootNamespace>ssmsmcp.$(MSBuildProjectName)</RootNamespace>
+        <AssemblyName>ssmsmcp.$(MSBuildProjectName)</AssemblyName>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Server.Api\Server.Api.csproj" />
+      <ProjectReference Include="..\Server.Mcp\Server.Mcp.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Aspire.Hosting.SqlServer" />
+      <PackageReference Include="CommunityToolkit.Aspire.Hosting.McpInspector" />
+    </ItemGroup>
+</Project>

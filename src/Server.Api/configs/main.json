@@ -1,0 +1,10 @@
+{
+  "main": {
+    "data-source": [
+      {
+        "Name": "SSMS",
+        "ConnectionString": "Server=localhost,1422;Database=AdventureWorksLT2022;User Id=sa;Password=Password123!"
+      }
+    ]
+  }
+}
