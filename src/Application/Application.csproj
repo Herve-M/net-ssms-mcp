@@ -8,14 +8,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FluentValidation"/>
-    <PackageReference Include="Mediator.Abstractions"/>
-    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions"/>
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions"/>
+    <PackageReference Include="FluentValidation" />
+    <PackageReference Include="Mediator.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../Domain/Domain.csproj"/>
+    <ProjectReference Include="../Domain/Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>

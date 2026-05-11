@@ -8,25 +8,27 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Asp.Versioning.OpenApi"/>
+    <PackageReference Include="Asp.Versioning.OpenApi" />
     <PackageReference Include="DotNetDiag.HealthChecks.UI.Client" />
     <PackageReference Include="Mediator.SourceGenerator">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi"/>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
     <PackageReference Include="Microsoft.Extensions.ApiDescription.Server">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.FeatureManagement.AspNetCore"/>
-    <PackageReference Include="Scalar.AspNetCore"/>
-    <PackageReference Include="Scalar.AspNetCore.Microsoft"/>
+    <PackageReference Include="Microsoft.FeatureManagement.AspNetCore" />
+    <PackageReference Include="ModelContextProtocol.AspNetCore" />
+    <PackageReference Include="Scalar.AspNetCore" />
+    <PackageReference Include="Scalar.AspNetCore.Microsoft" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../Application/Application.csproj"/>
-    <ProjectReference Include="../Infrastructure/Infrastructure.csproj"/>
+    <ProjectReference Include="../Application/Application.csproj" />
+    <ProjectReference Include="../Infrastructure/Infrastructure.csproj" />
+    <ProjectReference Include="../Server.Mcp.Shared/Server.Mcp.Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -15,6 +15,7 @@
     <Project Path="src/Server.Api/Server.Api.csproj" />
     <Project Path="src/Server.Aspire.Host/Server.Aspire.Host.csproj" />
     <Project Path="src/Server.Mcp/Server.Mcp.csproj" />
+    <Project Path="src/Server.Mcp.Shared/Server.Mcp.Shared.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Application.Integration/Application.Integration.csproj" />

@@ -4,24 +4,22 @@ using Mediator;
 using ModelContextProtocol.Server;
 using ssmsmcp.Application.Servers;
 
-namespace ssmsmcp.Server.Mcp.Tools;
+namespace ssmsmcp.Server.Mcp.tools;
 
 /// <summary>
 /// MCP tools for SQL Server information retrieval.
 /// These tools delegate to Application layer Mediator handlers to fetch server metadata and configuration.
 /// </summary>
-internal sealed class ServerTools
+internal sealed class ServerTools(IMediator mediator)
 {
-    private readonly IMediator _mediator;
-
-    public ServerTools(IMediator mediator) => _mediator = mediator;
+    private readonly IMediator _mediator = mediator;
 
     [McpServerTool]
     [Description("Retrieves a list of all available SQL Server instances with basic information.")]
     public async Task<string> GetServersList(CancellationToken cancellationToken)
     {
         var request = new GetServersListRequest();
-        var result = await _mediator.Send(request, cancellationToken);
+        IReadOnlyCollection<ServerListItemDto> result = await _mediator.Send(request, cancellationToken);
         return JsonSerializer.Serialize(result);
     }
 
@@ -32,7 +30,7 @@ internal sealed class ServerTools
         CancellationToken cancellationToken)
     {
         var request = new GetServerVersionRequest(serverName);
-        var result = await _mediator.Send(request, cancellationToken);
+        ServerVersionDto result = await _mediator.Send(request, cancellationToken);
         return JsonSerializer.Serialize(result);
     }
 
@@ -43,7 +41,7 @@ internal sealed class ServerTools
         CancellationToken cancellationToken)
     {
         var request = new GetServerDatabasesRequest(serverName);
-        var result = await _mediator.Send(request, cancellationToken);
+        IReadOnlyCollection<ServerDatabaseListItemDto> result = await _mediator.Send(request, cancellationToken);
         return JsonSerializer.Serialize(result);
     }
 
@@ -54,7 +52,7 @@ internal sealed class ServerTools
         CancellationToken cancellationToken)
     {
         var request = new GetServerAvailabilityRequest(serverName);
-        var result = await _mediator.Send(request, cancellationToken);
+        ServerAvailabilityDto result = await _mediator.Send(request, cancellationToken);
         return JsonSerializer.Serialize(result);
     }
 
@@ -65,7 +63,7 @@ internal sealed class ServerTools
         CancellationToken cancellationToken)
     {
         var request = new GetServerCapacityRequest(serverName);
-        var result = await _mediator.Send(request, cancellationToken);
+        ServerCapacityDto result = await _mediator.Send(request, cancellationToken);
         return JsonSerializer.Serialize(result);
     }
 
@@ -76,7 +74,7 @@ internal sealed class ServerTools
         CancellationToken cancellationToken)
     {
         var request = new GetServerConnectivityRequest(serverName);
-        var result = await _mediator.Send(request, cancellationToken);
+        ServerConnectivityDto result = await _mediator.Send(request, cancellationToken);
         return JsonSerializer.Serialize(result);
     }
 
@@ -87,7 +85,7 @@ internal sealed class ServerTools
         CancellationToken cancellationToken)
     {
         var request = new GetServerEngineRequest(serverName);
-        var result = await _mediator.Send(request, cancellationToken);
+        ServerEngineDto result = await _mediator.Send(request, cancellationToken);
         return JsonSerializer.Serialize(result);
     }
 
@@ -98,7 +96,7 @@ internal sealed class ServerTools
         CancellationToken cancellationToken)
     {
         var request = new GetServerFeaturesRequest(serverName);
-        var result = await _mediator.Send(request, cancellationToken);
+        ServerFeaturesDto result = await _mediator.Send(request, cancellationToken);
         return JsonSerializer.Serialize(result);
     }
 
@@ -109,7 +107,7 @@ internal sealed class ServerTools
         CancellationToken cancellationToken)
     {
         var request = new GetServerIdentityRequest(serverName);
-        var result = await _mediator.Send(request, cancellationToken);
+        ServerIdentityDto result = await _mediator.Send(request, cancellationToken);
         return JsonSerializer.Serialize(result);
     }
 
@@ -120,7 +118,7 @@ internal sealed class ServerTools
         CancellationToken cancellationToken)
     {
         var request = new GetServerLocalizationRequest(serverName);
-        var result = await _mediator.Send(request, cancellationToken);
+        ServerLocalizationDto result = await _mediator.Send(request, cancellationToken);
         return JsonSerializer.Serialize(result);
     }
 
@@ -131,7 +129,7 @@ internal sealed class ServerTools
         CancellationToken cancellationToken)
     {
         var request = new GetServerOverviewRequest(serverName);
-        var result = await _mediator.Send(request, cancellationToken);
+        ServerOverviewDto result = await _mediator.Send(request, cancellationToken);
         return JsonSerializer.Serialize(result);
     }
 
@@ -142,7 +140,7 @@ internal sealed class ServerTools
         CancellationToken cancellationToken)
     {
         var request = new GetServerPlatformRequest(serverName);
-        var result = await _mediator.Send(request, cancellationToken);
+        ServerPlatformDto result = await _mediator.Send(request, cancellationToken);
         return JsonSerializer.Serialize(result);
     }
 
@@ -153,7 +151,7 @@ internal sealed class ServerTools
         CancellationToken cancellationToken)
     {
         var request = new GetServerSecurityRequest(serverName);
-        var result = await _mediator.Send(request, cancellationToken);
+        ServerSecurityDto result = await _mediator.Send(request, cancellationToken);
         return JsonSerializer.Serialize(result);
     }
 
@@ -164,8 +162,7 @@ internal sealed class ServerTools
         CancellationToken cancellationToken)
     {
         var request = new GetServerStorageRequest(serverName);
-        var result = await _mediator.Send(request, cancellationToken);
+        ServerStorageDto result = await _mediator.Send(request, cancellationToken);
         return JsonSerializer.Serialize(result);
     }
-
 }

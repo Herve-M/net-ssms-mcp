@@ -5,11 +5,10 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using ssmsmcp.Application;
 using ssmsmcp.Infrastructure;
-using ssmsmcp.Server.Mcp.Tools;
+using ssmsmcp.Server.Mcp.Shared;
 
-// HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
 
-var builder = WebApplication.CreateBuilder(args);
+HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
 
 // Configure all logs to go to stderr (stdout is used for the MCP protocol messages).
 builder.Logging.AddConsole(o => o.LogToStandardErrorThreshold = LogLevel.Trace);
@@ -38,7 +37,7 @@ builder.Services
         options.NotificationPublisherType = typeof(ForeachAwaitPublisher);
         options.Assemblies =
         [
-            typeof(DependencyInjection).Assembly
+            typeof(ssmsmcp.Application.DependencyInjection).Assembly
             // typeof(ssmsmcp.Infrastructure.DependencyInjection).Assembly
         ];
         options.PipelineBehaviors = [];
@@ -56,15 +55,7 @@ builder.Services
             Description = "MCP server for SQL Server Management Studio integration, providing server metadata and configuration information."
         };
     })
-    // .WithStdioServerTransport()
-    .WithHttpTransport(options =>
-    {
-        options.Stateless = true;
-    })
-    .WithTools<ServerTools>();
+    .WithStdioServerTransport()
+    .AddTools();
 
-var app = builder.Build();
-
-app.MapMcp();
-
-app.Run("http://localhost:3001");
+await builder.Build().RunAsync();

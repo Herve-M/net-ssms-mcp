@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Scalar.AspNetCore;
 using ssmsmcp.Infrastructure;
 using ssmsmcp.Application;
+using ssmsmcp.Server.Mcp.Shared;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +28,23 @@ builder.Services
     {
         // options.AddScalarTransformers();
     })
+    ;
+
+builder.Services
+    .AddMcpServer(cfg =>
+    {
+        cfg.ServerInfo = new()
+        {
+            Name = "SSMS API Server",
+            Version = "0.1.0-beta",
+            Description = "API server for SQL Server Management Studio integration, providing server metadata and configuration information."
+        };
+    })
+    .WithHttpTransport(options =>
+    {
+        options.Stateless = true;
+    })
+    .AddTools()
     ;
 
 builder.Services
@@ -62,7 +80,6 @@ builder.Services
 
 WebApplication app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi()
@@ -73,6 +90,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.MapMcp("/mcp");
 
 app.MapControllers();
 
