@@ -18,7 +18,7 @@
     <Project Path="src/Server.Mcp.Shared/Server.Mcp.Shared.csproj" />
   </Folder>
   <Folder Name="/tests/">
-    <Project Path="tests/Application.Integration/Application.Integration.csproj" />
     <Project Path="tests/Infrastructure.Integration/Infrastructure.Integration.csproj" />
+    <Project Path="tests/Server.Api.Integration/Server.Api.Integration.csproj" />
   </Folder>
 </Solution>

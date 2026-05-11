@@ -36,6 +36,7 @@ builder.AddProject<Projects.Server_Mcp>("mcp-api")
         .WaitFor(sqlServer2022)
     .WithReference(sqlServer2025)
         .WaitFor(sqlServer2025)
+    .WithExplicitStart()
     ;
 
 // // require http

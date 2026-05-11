@@ -7,8 +7,9 @@
   <ItemGroup>
     <PackageVersion Include="Asp.Versioning.OpenApi" Version="10.0.0-rc.1" />
     <PackageVersion Include="Aspire.Hosting.SqlServer" Version="13.3.0" />
+    <PackageVersion Include="Aspire.Hosting.Testing" Version="13.3.0" />
     <PackageVersion Include="CommunityToolkit.Aspire.Hosting.McpInspector" Version="13.1.1" />
-    <PackageVersion Include="DotNetDiag.HealthChecks.SqlServer" Version="10.0.7" />
+    <PackageVersion Include="DotNetDiag.HealthChecks.SqlServer" Version="10.0.8" />
     <PackageVersion Include="DotNetDiag.HealthChecks.UI.Client" Version="10.0.7" />
     <PackageVersion Include="FluentValidation" Version="12.1.1" />
     <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
@@ -37,8 +38,8 @@
     <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.15.2" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.15.1" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.SqlClient" Version="1.15.2" />
-    <PackageVersion Include="Scalar.AspNetCore" Version="2.14.9" />
-    <PackageVersion Include="Scalar.AspNetCore.Microsoft" Version="2.14.9" />
+    <PackageVersion Include="Scalar.AspNetCore" Version="2.14.11" />
+    <PackageVersion Include="Scalar.AspNetCore.Microsoft" Version="2.14.11" />
     <PackageVersion Include="xunit.v3.mtp-v2" Version="3.2.2" />
     <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="10.0.7" />
   </ItemGroup>
