@@ -115,8 +115,6 @@ public sealed class DependencyInjectionBuilder(
             .ValidateOnStart()
             ;
 
-        // Services.Configure<MainConfiguration>(Configuration.GetSection(MainConfiguration.ConfigurationSectionName));
-
         Services
             .AddSingleton<IValidateOptions<MainConfiguration>, OptionsValidators<MainConfiguration>>()
             .AddValidatorsFromAssemblies(new[]

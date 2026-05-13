@@ -19,8 +19,8 @@ public sealed class ServersController(IMediator mediator)
     [ProducesResponseType(typeof(ProblemDetails), 500)]
     public async Task<IActionResult> GetServers(CancellationToken cancellationToken)
     {
-        var result = await mediator.Send(new GetServersListRequest(), cancellationToken);
-        var response = result
+        IReadOnlyCollection<ServerListItemDto> result = await mediator.Send(new GetServersListRequest(), cancellationToken);
+        ServerListItemResponse[] response = result
             .Select(server => new ServerListItemResponse
             {
                 ServerName = server.ServerName,
@@ -41,7 +41,7 @@ public sealed class ServersController(IMediator mediator)
     [ProducesResponseType(typeof(ProblemDetails), 500)]
     public async Task<IActionResult> GetServerOverview(string serverName, CancellationToken cancellationToken)
     {
-        var result = await mediator.Send(new GetServerOverviewRequest(serverName), cancellationToken);
+        ServerOverviewDto result = await mediator.Send(new GetServerOverviewRequest(serverName), cancellationToken);
         var response = new ServerOverviewResponse
         {
             ServerName = result.ServerName,
@@ -65,7 +65,7 @@ public sealed class ServersController(IMediator mediator)
     [ProducesResponseType(typeof(ProblemDetails), 500)]
     public async Task<IActionResult> GetServerIdentity(string serverName, CancellationToken cancellationToken)
     {
-        var result = await mediator.Send(new GetServerIdentityRequest(serverName), cancellationToken);
+        ServerIdentityDto result = await mediator.Send(new GetServerIdentityRequest(serverName), cancellationToken);
         var response = new ServerIdentityResponse
         {
             ServerName = result.ServerName,
@@ -87,7 +87,7 @@ public sealed class ServersController(IMediator mediator)
     [ProducesResponseType(typeof(ProblemDetails), 500)]
     public async Task<IActionResult> GetServerVersion(string serverName, CancellationToken cancellationToken)
     {
-        var result = await mediator.Send(new GetServerVersionRequest(serverName), cancellationToken);
+        ServerVersionDto result = await mediator.Send(new GetServerVersionRequest(serverName), cancellationToken);
         var response = new ServerVersionResponse
         {
             BuildNumber = result.BuildNumber,
@@ -111,7 +111,7 @@ public sealed class ServersController(IMediator mediator)
     [ProducesResponseType(typeof(ProblemDetails), 500)]
     public async Task<IActionResult> GetServerEngine(string serverName, CancellationToken cancellationToken)
     {
-        var result = await mediator.Send(new GetServerEngineRequest(serverName), cancellationToken);
+        ServerEngineDto result = await mediator.Send(new GetServerEngineRequest(serverName), cancellationToken);
         var response = new ServerEngineResponse
         {
             Edition = result.Edition,
@@ -133,7 +133,7 @@ public sealed class ServersController(IMediator mediator)
     [ProducesResponseType(typeof(ProblemDetails), 500)]
     public async Task<IActionResult> GetServerPlatform(string serverName, CancellationToken cancellationToken)
     {
-        var result = await mediator.Send(new GetServerPlatformRequest(serverName), cancellationToken);
+        ServerPlatformDto result = await mediator.Send(new GetServerPlatformRequest(serverName), cancellationToken);
         var response = new ServerPlatformResponse
         {
             HostPlatform = result.HostPlatform,
@@ -155,7 +155,7 @@ public sealed class ServersController(IMediator mediator)
     [ProducesResponseType(typeof(ProblemDetails), 500)]
     public async Task<IActionResult> GetServerLocalization(string serverName, CancellationToken cancellationToken)
     {
-        var result = await mediator.Send(new GetServerLocalizationRequest(serverName), cancellationToken);
+        ServerLocalizationDto result = await mediator.Send(new GetServerLocalizationRequest(serverName), cancellationToken);
         var response = new ServerLocalizationResponse
         {
             Language = result.Language,
@@ -176,7 +176,7 @@ public sealed class ServersController(IMediator mediator)
     [ProducesResponseType(typeof(ProblemDetails), 500)]
     public async Task<IActionResult> GetServerStorage(string serverName, CancellationToken cancellationToken)
     {
-        var result = await mediator.Send(new GetServerStorageRequest(serverName), cancellationToken);
+        ServerStorageDto result = await mediator.Send(new GetServerStorageRequest(serverName), cancellationToken);
         var response = new ServerStorageResponse
         {
             BackupDirectory = result.BackupDirectory,
@@ -198,7 +198,7 @@ public sealed class ServersController(IMediator mediator)
     [ProducesResponseType(typeof(ProblemDetails), 500)]
     public async Task<IActionResult> GetServerConnectivity(string serverName, CancellationToken cancellationToken)
     {
-        var result = await mediator.Send(new GetServerConnectivityRequest(serverName), cancellationToken);
+        ServerConnectivityDto result = await mediator.Send(new GetServerConnectivityRequest(serverName), cancellationToken);
         var response = new ServerConnectivityResponse
         {
             TcpEnabled = result.TcpEnabled,
@@ -217,7 +217,7 @@ public sealed class ServersController(IMediator mediator)
     [ProducesResponseType(typeof(ProblemDetails), 500)]
     public async Task<IActionResult> GetServerSecurity(string serverName, CancellationToken cancellationToken)
     {
-        var result = await mediator.Send(new GetServerSecurityRequest(serverName), cancellationToken);
+        ServerSecurityDto result = await mediator.Send(new GetServerSecurityRequest(serverName), cancellationToken);
         var response = new ServerSecurityResponse
         {
             LoginMode = result.LoginMode,
@@ -238,7 +238,7 @@ public sealed class ServersController(IMediator mediator)
     [ProducesResponseType(typeof(ProblemDetails), 500)]
     public async Task<IActionResult> GetServerAvailability(string serverName, CancellationToken cancellationToken)
     {
-        var result = await mediator.Send(new GetServerAvailabilityRequest(serverName), cancellationToken);
+        ServerAvailabilityDto result = await mediator.Send(new GetServerAvailabilityRequest(serverName), cancellationToken);
         var response = new ServerAvailabilityResponse
         {
             IsHadrEnabled = result.IsHadrEnabled,
@@ -260,7 +260,7 @@ public sealed class ServersController(IMediator mediator)
     [ProducesResponseType(typeof(ProblemDetails), 500)]
     public async Task<IActionResult> GetServerFeatures(string serverName, CancellationToken cancellationToken)
     {
-        var result = await mediator.Send(new GetServerFeaturesRequest(serverName), cancellationToken);
+        ServerFeaturesDto result = await mediator.Send(new GetServerFeaturesRequest(serverName), cancellationToken);
         var response = new ServerFeaturesResponse
         {
             IsJsonDataTypeEnabled = result.IsJsonDataTypeEnabled,
@@ -282,7 +282,7 @@ public sealed class ServersController(IMediator mediator)
     [ProducesResponseType(typeof(ProblemDetails), 500)]
     public async Task<IActionResult> GetServerCapacity(string serverName, CancellationToken cancellationToken)
     {
-        var result = await mediator.Send(new GetServerCapacityRequest(serverName), cancellationToken);
+        ServerCapacityDto result = await mediator.Send(new GetServerCapacityRequest(serverName), cancellationToken);
         var response = new ServerCapacityResponse
         {
             Processors = result.Processors,
@@ -304,8 +304,8 @@ public sealed class ServersController(IMediator mediator)
     [ProducesResponseType(typeof(ProblemDetails), 500)]
     public async Task<IActionResult> GetServerDatabases(string serverName, CancellationToken cancellationToken)
     {
-        var result = await mediator.Send(new GetServerDatabasesRequest(serverName), cancellationToken);
-        var response = result
+        IReadOnlyCollection<ServerDatabaseListItemDto> result = await mediator.Send(new GetServerDatabasesRequest(serverName), cancellationToken);
+        ServerDatabaseListItemResponse[] response = result
             .Select(database => new ServerDatabaseListItemResponse
             {
                 Id = database.Id,

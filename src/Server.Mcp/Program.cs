@@ -31,14 +31,13 @@ builder.Services
 builder.Services
     .AddMediator(options =>
     {
-        options.Namespace = "ssmsmcp.Server.Api.Mediator";
+        options.Namespace = "ssmsmcp.Server.Mcp.Mediator";
         options.ServiceLifetime = ServiceLifetime.Singleton;
         options.GenerateTypesAsInternal = true;
         options.NotificationPublisherType = typeof(ForeachAwaitPublisher);
         options.Assemblies =
         [
             typeof(ssmsmcp.Application.DependencyInjection).Assembly
-            // typeof(ssmsmcp.Infrastructure.DependencyInjection).Assembly
         ];
         options.PipelineBehaviors = [];
         options.StreamPipelineBehaviors = [];

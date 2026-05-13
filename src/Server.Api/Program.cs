@@ -26,6 +26,7 @@ builder.Services
     .AddMvc()
     .AddOpenApi(options =>
     {
+        //TODO: fait for official fix from Scalar?
         // options.AddScalarTransformers();
     })
     ;
@@ -72,7 +73,6 @@ builder.Services
         options.Assemblies =
         [
             typeof(ssmsmcp.Application.DependencyInjection).Assembly
-            // typeof(ssmsmcp.Infrastructure.DependencyInjection).Assembly
         ];
         options.PipelineBehaviors = [];
         options.StreamPipelineBehaviors = [];

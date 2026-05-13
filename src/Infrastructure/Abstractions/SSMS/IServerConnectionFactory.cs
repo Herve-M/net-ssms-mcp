@@ -6,6 +6,6 @@ internal interface IServerConnectionFactory
     : IDisposable
 {
     ValueTask<Server> ConnectTo(in string connectionString);
-    ValueTask<Server> GetServer(in string serverName, in bool forceNewConnection = false);
+    ValueTask<Server> GetServer(in string serverName);
     ValueTask<IReadOnlyCollection<Server>> GetAllServers();
 }
