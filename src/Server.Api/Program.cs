@@ -3,8 +3,8 @@ using HealthChecks.UI.Client;
 using Mediator;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Scalar.AspNetCore;
-using ssmsmcp.Infrastructure;
 using ssmsmcp.Application;
+using ssmsmcp.Infrastructure;
 using ssmsmcp.Server.Mcp.Shared;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
