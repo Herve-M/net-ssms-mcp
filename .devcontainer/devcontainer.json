@@ -33,7 +33,8 @@
 				"darkriszty.markdown-table-prettify",
 				"yzhang.markdown-all-in-one",
 				"ms-dotnettools.csdevkit",
-				"GitHub.copilot-chat"
+				"GitHub.copilot-chat",
+				"microsoft-aspire.aspire-vscode"
 			]
 		}
 	},

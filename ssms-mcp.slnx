@@ -4,6 +4,7 @@
     <File Path=".gitattributes" />
     <File Path=".gitignore" />
     <File Path=".vsconfig" />
+    <File Path="aspire.config.json" />
     <File Path="global.json" />
     <File Path="LICENSE" />
   </Folder>
@@ -12,10 +13,12 @@
     <Project Path="src/Domain/Domain.csproj" />
     <Project Path="src/Infrastructure/Infrastructure.csproj" />
     <Project Path="src/Server.Api/Server.Api.csproj" />
+    <Project Path="src/Server.Aspire.Host/Server.Aspire.Host.csproj" />
     <Project Path="src/Server.Mcp/Server.Mcp.csproj" />
+    <Project Path="src/Server.Mcp.Shared/Server.Mcp.Shared.csproj" />
   </Folder>
   <Folder Name="/tests/">
-    <Project Path="tests/Application.Integration/Application.Integration.csproj" />
     <Project Path="tests/Infrastructure.Integration/Infrastructure.Integration.csproj" />
+    <Project Path="tests/Server.Api.Integration/Server.Api.Integration.csproj" />
   </Folder>
 </Solution>
