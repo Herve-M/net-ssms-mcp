@@ -1,9 +1,11 @@
-name: server-mcp-pr
+name: server-mcp
 
 on:
-  pull_request:
+  push:
     branches:
       - main
+    tags:
+      - mcp-*
     paths-ignore:
       - src/Server.Api/**
       - .devcontainer/**
@@ -17,35 +19,24 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-slim
+    runs-on: ubuntu-latest
 
     permissions:
-      pull-requests: write
+      packages: write
       contents: read
 
     steps:
       - uses: actions/checkout@v6.0.2
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+          filter: tree:0
+          lfs: false
 
       - name: "Setup .NET"
         uses: actions/setup-dotnet@v5.2.0
         with:
           dotnet-version: 10.0.x
-
-      #TODO: find a up to date dotnet format action that supports recent updates
-      # - name: "dotnet format"
-      #   uses: jfversluis/dotnet-format@v1.0.9
-      #   with:
-      #     action: check
-      #     only-changed-files: true
-      #     fail-fast: true
-      #     repo-token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: "Dependency review"
-        uses: actions/dependency-review-action@v4
-        with:
-          license-check: true
-          vulnerability-check: true
-          comment-summary-in-pr: on-failure
 
       - name: "Restore dependencies"
         run: dotnet restore
@@ -56,5 +47,8 @@ jobs:
       - name: "Build server-mcp"
         run: dotnet build src/Server.Mcp/Server.Mcp.csproj -c Release --no-restore
 
-      - name: "Pack server-mcp"
+      - name: "Pack mcp"
         run: dotnet pack src/Server.Mcp/Server.Mcp.csproj -c Release --no-build -o ${{ runner.temp }}
+
+      - name: "Publish NuGet package"
+        run: dotnet nuget push "${{ runner.temp }}/ssms-mcp.*.nupkg" --api-key "${{ secrets.GITHUB_TOKEN }}" --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" --skip-duplicate
