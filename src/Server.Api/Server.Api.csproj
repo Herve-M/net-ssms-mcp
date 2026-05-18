@@ -15,6 +15,7 @@
     <ContainerRepository>Herve-M/net-ssms-mcp</ContainerRepository>
     <ContainerTitle>SSMS MCP (HTTP) API</ContainerTitle>
     <ContainerImageFormat>OCI</ContainerImageFormat>
+    <ContainerRuntimeIdentifiers>linux-x64;linux-arm64</ContainerRuntimeIdentifiers>
     <!-- <ContainerImageTags>main;$(MinVerMajor);$(MinVerMajor).$(MinVerMinor);</ContainerImageTags> -->
   </PropertyGroup>
 
