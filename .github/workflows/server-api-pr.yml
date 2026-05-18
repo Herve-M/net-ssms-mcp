@@ -17,7 +17,7 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
 
     permissions:
       pull-requests: write
@@ -57,7 +57,7 @@ jobs:
         run: dotnet build src/Server.Api/Server.Api.csproj -c Release --no-restore
 
       - name: "Publish container"
-        run: dotnet publish --configuration Release --no-build --os linux --arch x64 /t:PublishContainer -p ContainerArchiveOutputPath=${{ runner.temp }}/ssms-mcp-api.tar.gz
+        run: dotnet publish --configuration Release --no-build --os linux /t:PublishContainer -p ContainerArchiveOutputPath=${{ runner.temp }}/ssms-mcp-api.tar.gz
 
       - name: Anchore SBOM Action
         uses: anchore/sbom-action@v0.24.0
