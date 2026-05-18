@@ -55,3 +55,12 @@ jobs:
 
       - name: "Build server-api"
         run: dotnet build src/Server.Api/Server.Api.csproj -c Release --no-restore
+
+      - name: "Publish container"
+        run: dotnet publish --configuration Release --no-build --os linux --arch x64 /t:PublishContainer -p ContainerArchiveOutputPath=${{ runner.temp }}/ssms-mcp-api.tar.gz
+
+      - name: Anchore SBOM Action
+        uses: anchore/sbom-action@v0.24.0
+        id: oci-image
+        with:
+          file: ${{ runner.temp }}/ssms-mcp-api.tar.gz

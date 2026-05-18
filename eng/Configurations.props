@@ -7,6 +7,12 @@
     <RepositoryUrl>https://github.com/Herve-M/net-ssms-mcp</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageProjectUrl>https://github.com/Herve-M/net-ssms-mcp</PackageProjectUrl>
+    <PackageLicenseExpression>MPL-2.0</PackageLicenseExpression>
+  </PropertyGroup>
+
+  <!-- MinVer configuration -->
+  <PropertyGroup>
+    <MinVerDefaultPreReleaseIdentifiers>beta</MinVerDefaultPreReleaseIdentifiers>
   </PropertyGroup>
 
   <!-- Language configuration -->
@@ -18,6 +24,7 @@
   <!-- Build configuration -->
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+    <MinVerSkip>true</MinVerSkip>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>

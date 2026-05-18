@@ -5,6 +5,16 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>ssmsmcp.$(MSBuildProjectName)</RootNamespace>
     <AssemblyName>ssmsmcp.$(MSBuildProjectName)</AssemblyName>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <MinVerTagPrefix>api-</MinVerTagPrefix>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <ContainerBaseImage>mcr.microsoft.com/dotnet/aspnet:10.0-noble-chiseled</ContainerBaseImage>
+    <ContainerRepository>Herve-M/net-ssms-mcp</ContainerRepository>
+    <ContainerTitle>SSMS MCP (HTTP) API</ContainerTitle>
+    <ContainerImageFormat>OCI</ContainerImageFormat>
+    <!-- <ContainerImageTags>main;$(MinVerMajor);$(MinVerMajor).$(MinVerMinor);</ContainerImageTags> -->
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,6 +30,10 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.FeatureManagement.AspNetCore" />
+    <PackageReference Include="MinVer">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
     <PackageReference Include="ModelContextProtocol.AspNetCore" />
     <PackageReference Include="Scalar.AspNetCore" />
     <PackageReference Include="Scalar.AspNetCore.Microsoft" />
@@ -41,5 +55,11 @@
     <OpenApiDocumentsDirectory>.</OpenApiDocumentsDirectory>
     <OpenApiGenerateDocumentsOptions>--document-name v1 --file-name openapi-v1</OpenApiGenerateDocumentsOptions>
   </PropertyGroup>
+
+  <Target Name="_versioning" AfterTargets="MinVer">
+    <PropertyGroup>
+      <ContainerImageTags>main;$(MinVerMajor);$(MinVerMajor).$(MinVerMinor);</ContainerImageTags>
+    </PropertyGroup>
+  </Target>
 
 </Project>
