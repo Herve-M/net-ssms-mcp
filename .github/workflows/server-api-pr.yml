@@ -54,11 +54,11 @@ jobs:
           vulnerability-check: true
           comment-summary-in-pr: on-failure
 
-      - name: "Restore dependencies"
-        run: dotnet restore
-
       - name: "Restore tools"
-        run: dotnet tool restore --runtime ${{ matrix.runtime }}
+        run: dotnet tool restore
+
+      - name: "Restore dependencies"
+        run: dotnet restore --runtime ${{ matrix.runtime }}
 
       - name: "Build server-api"
         run: dotnet build src/Server.Api/Server.Api.csproj --configuration Release --runtime ${{ matrix.runtime }} --no-restore
