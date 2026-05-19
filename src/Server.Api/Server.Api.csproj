@@ -53,8 +53,11 @@
     </Content>
   </ItemGroup>
 
-  <!-- https://github.com/dotnet/aspnetcore/issues/65230 | local | CI -->
-  <PropertyGroup Condition="'$(RuntimeIdentifier)' == '' or '$(RuntimeIdentifier)' == 'linux-x64' or '$(RuntimeIdentifier)' == 'win-x64'">
+  <!-- https://github.com/dotnet/aspnetcore/issues/65230 | Microsoft.Extensions.ApiDescription.Server not working on arm64 -->
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'linux-arm64' or '$(RuntimeIdentifier)' == 'win-arm64'">
+    <OpenApiGenerateDocumentsOnBuild>false</OpenApiGenerateDocumentsOnBuild>
+  </PropertyGroup>
+  <PropertyGroup >
     <OpenApiDocumentsDirectory>.</OpenApiDocumentsDirectory>
     <OpenApiGenerateDocumentsOptions>--document-name v1 --file-name openapi-v1</OpenApiGenerateDocumentsOptions>
   </PropertyGroup>
