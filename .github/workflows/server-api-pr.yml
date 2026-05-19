@@ -68,3 +68,10 @@ jobs:
         with:
           file: ${{ runner.temp }}/ssms-mcp-api.tar.gz
           artifact-name: ssms-mcp-api-oci.spdx.json
+
+      - name: Scan SBOM
+        uses: anchore/scan-action@v7.4.0
+        with:
+          sbom: ${{ runner.temp }}/ssms-mcp-api-oci.spdx.json
+          fail-build: true
+          severity-cutoff: high
