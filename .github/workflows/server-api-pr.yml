@@ -19,6 +19,13 @@ jobs:
   build:
     runs-on: ubuntu-slim
 
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runtime: "linux-x64"
+          - runtime: "linux-arm64"
+
     permissions:
       pull-requests: write
       contents: read
@@ -51,16 +58,16 @@ jobs:
         run: dotnet restore
 
       - name: "Restore tools"
-        run: dotnet tool restore
+        run: dotnet tool restore --runtime ${{ matrix.runtime }}
 
       - name: "Build server-api"
-        run: dotnet build src/Server.Api/Server.Api.csproj -c Release --no-restore
+        run: dotnet build src/Server.Api/Server.Api.csproj --configuration Release --runtime ${{ matrix.runtime }} --no-restore
 
       - name: "Publish container"
-        run: dotnet publish --configuration Release --no-build --os linux /t:PublishContainer -p ContainerArchiveOutputPath=${{ runner.temp }}/ssms-mcp-api.tar.gz
+        run: dotnet publish src/Server.Api/Server.Api.csproj --configuration Release --runtime ${{ matrix.runtime }} --no-build --no-restore --os linux /t:PublishContainer -p ContainerArchiveOutputPath=${{ runner.temp }}/ssms-mcp-api-${{ matrix.runtime }}.tar.gz
 
-      - name: Anchore SBOM Action
+      - name: Container SBOM (${{ matrix.runtime }})
         uses: anchore/sbom-action@v0.24.0
         id: oci-image
         with:
-          file: ${{ runner.temp }}/ssms-mcp-api.tar.gz
+          file: ${{ runner.temp }}/ssms-mcp-api-${{ matrix.runtime }}.tar.gz
