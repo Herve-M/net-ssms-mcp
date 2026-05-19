@@ -27,6 +27,8 @@ jobs:
     steps:
       - uses: actions/checkout@v6.0.2
 
+      - run: git fetch --depth=1 origin ${{ github.base_ref }}
+
       - name: "Setup .NET"
         uses: actions/setup-dotnet@v5.2.0
         with:
@@ -75,3 +77,9 @@ jobs:
           sbom: ${{ runner.temp }}/ssms-mcp-api-oci.spdx.json
           fail-build: true
           severity-cutoff: high
+
+      - uses: oasdiff/oasdiff-action/breaking@v0.0.47
+        with:
+          base: "origin/${{ github.base_ref }}:src/Server.Api/openapi-v1.json"
+          revision: "HEAD:src/Server.Api/openapi-v1.json"
+          fail-on: ERR
