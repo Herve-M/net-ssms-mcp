@@ -53,7 +53,8 @@
     </Content>
   </ItemGroup>
 
-  <PropertyGroup>
+  <!-- https://github.com/dotnet/aspnetcore/issues/65230 | local | CI -->
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == '' or '$(RuntimeIdentifier)' == 'linux-x64' or '$(RuntimeIdentifier)' == 'win-x64'">
     <OpenApiDocumentsDirectory>.</OpenApiDocumentsDirectory>
     <OpenApiGenerateDocumentsOptions>--document-name v1 --file-name openapi-v1</OpenApiGenerateDocumentsOptions>
   </PropertyGroup>

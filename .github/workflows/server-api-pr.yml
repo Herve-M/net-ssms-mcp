@@ -64,7 +64,7 @@ jobs:
         run: dotnet build src/Server.Api/Server.Api.csproj --configuration Release --runtime ${{ matrix.runtime }} --no-restore
 
       - name: "Publish container"
-        run: dotnet publish src/Server.Api/Server.Api.csproj --configuration Release --runtime ${{ matrix.runtime }} --no-build --no-restore --os linux /t:PublishContainer -p ContainerArchiveOutputPath=${{ runner.temp }}/ssms-mcp-api-${{ matrix.runtime }}.tar.gz
+        run: dotnet publish src/Server.Api/Server.Api.csproj --configuration Release --runtime ${{ matrix.runtime }} --no-build --no-restore /t:PublishContainer -p ContainerArchiveOutputPath=${{ runner.temp }}/ssms-mcp-api-${{ matrix.runtime }}.tar.gz
 
       - name: Container SBOM (${{ matrix.runtime }})
         uses: anchore/sbom-action@v0.24.0
