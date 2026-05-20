@@ -68,18 +68,19 @@ jobs:
       - name: "Re-Build and Publish multi-arch container"
         run: dotnet publish src/Server.Api/Server.Api.csproj --configuration Release  /t:PublishContainer -p ContainerArchiveOutputPath=${{ runner.temp }}/ssms-mcp-api.tar.gz
 
-      - name: "Container SBOM"
-        uses: anchore/sbom-action@v0.24.0
-        with:
-          file: ${{ runner.temp }}/ssms-mcp-api.tar.gz
-          artifact-name: ssms-mcp-api-oci.spdx.json
+      #TODO: find replacement multi-arch not supported, https://github.com/anchore/syft/issues/1545,
+      # - name: "Container SBOM"
+      #   uses: anchore/sbom-action@v0.24.0
+      #   with:
+      #     file: ${{ runner.temp }}/ssms-mcp-api.tar.gz
+      #     artifact-name: ssms-mcp-api-oci.spdx.json
 
-      - name: "Scan SBOM"
-        uses: anchore/scan-action@v7.4.0
-        with:
-          sbom: ${{ runner.temp }}/ssms-mcp-api-oci.spdx.json
-          fail-build: true
-          severity-cutoff: high
+      # - name: "Scan SBOM"
+      #   uses: anchore/scan-action@v7.4.0
+      #   with:
+      #     sbom: ${{ runner.temp }}/ssms-mcp-api-oci.spdx.json
+      #     fail-build: true
+      #     severity-cutoff: high
 
       #TODO: find replacement for oasdiff that works without docker
       # - name: Extract base and head OpenAPI files
