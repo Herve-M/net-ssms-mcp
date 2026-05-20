@@ -58,17 +58,15 @@ jobs:
         run: dotnet restore
 
       # NOTE: publish with multiple runtimes requires build this first, then each RID separately
-      - name: "Build server-api"
-        run: dotnet build src/Server.Api/Server.Api.csproj --configuration Release --no-restore
-
       - name: "Build server-api (linux-arm64)"
         run: dotnet build src/Server.Api/Server.Api.csproj --configuration Release --runtime linux-arm64 --no-restore
 
       - name: "Build server-api (linux-x64)"
         run: dotnet build src/Server.Api/Server.Api.csproj --configuration Release --runtime linux-x64 --no-restore
 
-      - name: "Publish multi-arch container"
-        run: dotnet publish src/Server.Api/Server.Api.csproj --configuration Release --no-build --no-restore /t:PublishContainer -p ContainerArchiveOutputPath=${{ runner.temp }}/ssms-mcp-api.tar.gz
+      #NOTE: can´t use --no-build --no-restore as publish for containers do something special?
+      - name: "Re-Build and Publish multi-arch container"
+        run: dotnet publish src/Server.Api/Server.Api.csproj --configuration Release  /t:PublishContainer -p ContainerArchiveOutputPath=${{ runner.temp }}/ssms-mcp-api.tar.gz
 
       - name: "Container SBOM"
         uses: anchore/sbom-action@v0.24.0
