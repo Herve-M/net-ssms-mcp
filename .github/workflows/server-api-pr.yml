@@ -79,9 +79,15 @@ jobs:
           fail-build: true
           severity-cutoff: high
 
-      - name: "API breaking change detection"
-        uses: oasdiff/oasdiff-action/breaking@v0.0.47
-        with:
-          base: "origin/${{ github.base_ref }}:src/Server.Api/openapi-v1.json"
-          revision: "HEAD:src/Server.Api/openapi-v1.json"
-          fail-on: ERR
+      #TODO: find replacement for oasdiff that works without docker
+      # - name: Extract base and head OpenAPI files
+      #   run: |
+      #     git show "origin/${{ github.base_ref }}:src/Server.Api/openapi-v1.json" > ${{ runner.temp }}/openapi-v1-base.yaml
+      #     git show "HEAD:src/Server.Api/openapi-v1.json" > ${{ runner.temp }}/openapi-v1-head.yaml
+
+      # - name: "API breaking change detection"
+      #   uses: oasdiff/oasdiff-action/breaking@v0.0.47
+      #   with:
+      #     base: "origin/${{ github.base_ref }}:src/Server.Api/openapi-v1.json"
+      #     revision: "HEAD:src/Server.Api/openapi-v1.json"
+      #     fail-on: ERR
