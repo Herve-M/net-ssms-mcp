@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
-    <RuntimeIdentifiers>win-x64;win-arm64;linux-x64;linux-arm64</RuntimeIdentifiers>
+    <RuntimeIdentifiers>linux-x64;linux-arm64</RuntimeIdentifiers>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>ssmsmcp.$(MSBuildProjectName)</RootNamespace>
     <AssemblyName>ssmsmcp.$(MSBuildProjectName)</AssemblyName>
@@ -11,6 +11,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
+    <LocalRegistry>Docker</LocalRegistry>
     <ContainerBaseImage>mcr.microsoft.com/dotnet/aspnet:10.0-noble-chiseled</ContainerBaseImage>
     <ContainerRepository>Herve-M/net-ssms-mcp</ContainerRepository>
     <ContainerTitle>SSMS MCP (HTTP) API</ContainerTitle>
@@ -54,7 +55,7 @@
   </ItemGroup>
 
   <!-- https://github.com/dotnet/aspnetcore/issues/65230 | Microsoft.Extensions.ApiDescription.Server not working on arm64 -->
-  <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'linux-arm64' or '$(RuntimeIdentifier)' == 'win-arm64'">
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'linux-arm64'">
     <OpenApiGenerateDocumentsOnBuild>false</OpenApiGenerateDocumentsOnBuild>
   </PropertyGroup>
   <PropertyGroup >
