@@ -65,20 +65,21 @@ jobs:
       - name: "Publish multi-arch container"
         run: dotnet publish src/Server.Api/Server.Api.csproj --configuration Release --no-build --no-restore /t:PublishContainer -p ContainerArchiveOutputPath=${{ runner.temp }}/ssms-mcp-api.tar.gz
 
-      - name: Container SBOM
+      - name: "Container SBOM"
         uses: anchore/sbom-action@v0.24.0
         with:
           file: ${{ runner.temp }}/ssms-mcp-api.tar.gz
           artifact-name: ssms-mcp-api-oci.spdx.json
 
-      - name: Scan SBOM
+      - name: "Scan SBOM"
         uses: anchore/scan-action@v7.4.0
         with:
           sbom: ${{ runner.temp }}/ssms-mcp-api-oci.spdx.json
           fail-build: true
           severity-cutoff: high
 
-      - uses: oasdiff/oasdiff-action/breaking@v0.0.47
+      - name: "API breaking change detection"
+        uses: oasdiff/oasdiff-action/breaking@v0.0.47
         with:
           base: "origin/${{ github.base_ref }}:src/Server.Api/openapi-v1.json"
           revision: "HEAD:src/Server.Api/openapi-v1.json"
