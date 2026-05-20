@@ -57,6 +57,10 @@ jobs:
       - name: "Restore dependencies"
         run: dotnet restore
 
+      # NOTE: publish with multiple runtimes requires build this first, then each RID separately
+      - name: "Build server-api"
+        run: dotnet build src/Server.Api/Server.Api.csproj --configuration Release --no-restore
+
       - name: "Build server-api (linux-arm64)"
         run: dotnet build src/Server.Api/Server.Api.csproj --configuration Release --runtime linux-arm64 --no-restore
 
