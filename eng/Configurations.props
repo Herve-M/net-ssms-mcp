@@ -13,6 +13,7 @@
   <!-- MinVer configuration -->
   <PropertyGroup>
     <MinVerDefaultPreReleaseIdentifiers>beta</MinVerDefaultPreReleaseIdentifiers>
+    <MinVerIgnoreHeight>true</MinVerIgnoreHeight>
   </PropertyGroup>
 
   <!-- Language configuration -->
