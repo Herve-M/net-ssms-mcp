@@ -2,9 +2,23 @@
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
+    <RuntimeIdentifiers>linux-x64;linux-arm64</RuntimeIdentifiers>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>ssmsmcp.$(MSBuildProjectName)</RootNamespace>
     <AssemblyName>ssmsmcp.$(MSBuildProjectName)</AssemblyName>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <StaticWebAssetsEnabled>false</StaticWebAssetsEnabled>
+    <MinVerTagPrefix>api-</MinVerTagPrefix>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <LocalRegistry>Docker</LocalRegistry>
+    <ContainerBaseImage>mcr.microsoft.com/dotnet/aspnet:10.0-noble-chiseled</ContainerBaseImage>
+    <ContainerRepository>Herve-M/net-ssms-mcp</ContainerRepository>
+    <ContainerTitle>SSMS MCP (HTTP) API</ContainerTitle>
+    <ContainerImageFormat>OCI</ContainerImageFormat>
+    <ContainerRuntimeIdentifiers>linux-x64;linux-arm64</ContainerRuntimeIdentifiers>
+    <!-- <ContainerImageTags>main;$(MinVerMajor);$(MinVerMajor).$(MinVerMinor);</ContainerImageTags> -->
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,6 +34,10 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.FeatureManagement.AspNetCore" />
+    <PackageReference Include="MinVer">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
     <PackageReference Include="ModelContextProtocol.AspNetCore" />
     <PackageReference Include="Scalar.AspNetCore" />
     <PackageReference Include="Scalar.AspNetCore.Microsoft" />
@@ -37,9 +55,19 @@
     </Content>
   </ItemGroup>
 
-  <PropertyGroup>
+  <!-- https://github.com/dotnet/aspnetcore/issues/65230 | Microsoft.Extensions.ApiDescription.Server not working on arm64 -->
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'linux-arm64'">
+    <OpenApiGenerateDocumentsOnBuild>false</OpenApiGenerateDocumentsOnBuild>
+  </PropertyGroup>
+  <PropertyGroup >
     <OpenApiDocumentsDirectory>.</OpenApiDocumentsDirectory>
     <OpenApiGenerateDocumentsOptions>--document-name v1 --file-name openapi-v1</OpenApiGenerateDocumentsOptions>
   </PropertyGroup>
+
+  <Target Name="_versioning" AfterTargets="MinVer">
+    <PropertyGroup>
+      <ContainerImageTags>main;$(MinVerMajor);$(MinVerMajor).$(MinVerMinor);</ContainerImageTags>
+    </PropertyGroup>
+  </Target>
 
 </Project>

@@ -1,0 +1,54 @@
+name: server-mcp
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - mcp-*
+    paths-ignore:
+      - src/Server.Api/**
+      - .devcontainer/**
+      - .vscode/**
+      - .idea/**
+      - docs/**
+      - README.md
+
+env:
+  DOTNET_NOLOGO: true
+
+jobs:
+  build:
+    runs-on: ubuntu-slim
+
+    permissions:
+      packages: write
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v6.0.2
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+          filter: tree:0
+          lfs: false
+
+      - name: "Setup .NET"
+        uses: actions/setup-dotnet@v5.2.0
+        with:
+          dotnet-version: 10.0.x
+
+      - name: "Restore dependencies"
+        run: dotnet restore
+
+      - name: "Restore tools"
+        run: dotnet tool restore
+
+      - name: "Build server-mcp"
+        run: dotnet build src/Server.Mcp/Server.Mcp.csproj -c Release --no-restore
+
+      - name: "Pack mcp"
+        run: dotnet pack src/Server.Mcp/Server.Mcp.csproj -c Release --no-build -o ${{ runner.temp }}
+
+      - name: "Publish NuGet package"
+        run: dotnet nuget push "${{ runner.temp }}/ssms-mcp.*.nupkg" --api-key "${{ secrets.GITHUB_TOKEN }}" --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" --skip-duplicate

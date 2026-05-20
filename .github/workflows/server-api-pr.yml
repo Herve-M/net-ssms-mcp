@@ -2,6 +2,7 @@ name: server-api-pr
 
 on:
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
     branches:
       - main
     paths-ignore:
@@ -17,7 +18,8 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    if: ${{ !github.event.pull_request.draft }}
+    runs-on: ubuntu-slim
 
     permissions:
       pull-requests: write
@@ -25,6 +27,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6.0.2
+
+      - run: git fetch --depth=1 origin ${{ github.base_ref }}
 
       - name: "Setup .NET"
         uses: actions/setup-dotnet@v5.2.0
@@ -47,11 +51,46 @@ jobs:
           vulnerability-check: true
           comment-summary-in-pr: on-failure
 
-      - name: "Restore dependencies"
-        run: dotnet restore
-
       - name: "Restore tools"
         run: dotnet tool restore
 
-      - name: "Build server-api"
-        run: dotnet build src/Server.Api/Server.Api.csproj -c Release --no-restore
+      - name: "Restore dependencies"
+        run: dotnet restore
+
+      # NOTE: publish with multiple runtimes requires build this first, then each RID separately
+      - name: "Build server-api (linux-arm64)"
+        run: dotnet build src/Server.Api/Server.Api.csproj --configuration Release --runtime linux-arm64 --no-restore
+
+      - name: "Build server-api (linux-x64)"
+        run: dotnet build src/Server.Api/Server.Api.csproj --configuration Release --runtime linux-x64 --no-restore
+
+      #NOTE: can´t use --no-build --no-restore as publish for containers do something special?
+      - name: "Re-Build and Publish multi-arch container"
+        run: dotnet publish src/Server.Api/Server.Api.csproj --configuration Release  /t:PublishContainer -p ContainerArchiveOutputPath=${{ runner.temp }}/ssms-mcp-api.tar.gz
+
+      #TODO: find replacement multi-arch not supported, https://github.com/anchore/syft/issues/1545,
+      # - name: "Container SBOM"
+      #   uses: anchore/sbom-action@v0.24.0
+      #   with:
+      #     file: ${{ runner.temp }}/ssms-mcp-api.tar.gz
+      #     artifact-name: ssms-mcp-api-oci.spdx.json
+
+      # - name: "Scan SBOM"
+      #   uses: anchore/scan-action@v7.4.0
+      #   with:
+      #     sbom: ${{ runner.temp }}/ssms-mcp-api-oci.spdx.json
+      #     fail-build: true
+      #     severity-cutoff: high
+
+      #TODO: find replacement for oasdiff that works without docker
+      # - name: Extract base and head OpenAPI files
+      #   run: |
+      #     git show "origin/${{ github.base_ref }}:src/Server.Api/openapi-v1.json" > ${{ runner.temp }}/openapi-v1-base.yaml
+      #     git show "HEAD:src/Server.Api/openapi-v1.json" > ${{ runner.temp }}/openapi-v1-head.yaml
+
+      # - name: "API breaking change detection"
+      #   uses: oasdiff/oasdiff-action/breaking@v0.0.47
+      #   with:
+      #     base: "origin/${{ github.base_ref }}:src/Server.Api/openapi-v1.json"
+      #     revision: "HEAD:src/Server.Api/openapi-v1.json"
+      #     fail-on: ERR

@@ -1,0 +1,51 @@
+name: server-api
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - api-*
+    paths-ignore:
+      - src/Server.Mcp/**
+      - .devcontainer/**
+      - .vscode/**
+      - .idea/**
+      - docs/**
+      - README.md
+
+env:
+  DOTNET_NOLOGO: true
+
+jobs:
+  build:
+    runs-on: ubuntu-slim
+
+    permissions:
+      packages: write
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v6.0.2
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+          filter: tree:0
+          lfs: false
+
+      - name: "Setup .NET"
+        uses: actions/setup-dotnet@v5.2.0
+        with:
+          dotnet-version: 10.0.x
+
+      - name: "Restore dependencies"
+        run: dotnet restore
+
+      - name: "Restore tools"
+        run: dotnet tool restore
+
+      - name: Log in to registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: "Publish Container"
+        run: dotnet publish src/Server.Api/Server.Api.csproj --configuration Release --no-restore /t:PublishContainer -p ContainerRegistry=ghcr.io
