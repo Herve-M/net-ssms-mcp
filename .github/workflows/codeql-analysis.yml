@@ -5,25 +5,34 @@ on:
     branches:
       - main
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
     branches:
       - main
     paths-ignore:
-      - "**/*.md"
+      - .devcontainer/**
+      - .vscode/**
+      - .idea/**
+      - docs/**
+      - README.md
 
 jobs:
   analyze:
+    if: ${{ !github.event.pull_request.draft }}
     name: Analyze
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
+
     permissions:
       actions: read
       contents: read
       security-events: write
+
     strategy:
       fail-fast: false
       matrix:
         include:
           - language: csharp
             build-mode: autobuild
+
     steps:
       - uses: actions/checkout@v6
 

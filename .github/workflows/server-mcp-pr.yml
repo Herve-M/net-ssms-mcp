@@ -2,6 +2,7 @@ name: server-mcp-pr
 
 on:
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
     branches:
       - main
     paths-ignore:
@@ -17,7 +18,8 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    if: ${{ !github.event.pull_request.draft }}
+    runs-on: ubuntu-slim
 
     permissions:
       pull-requests: write
@@ -47,11 +49,26 @@ jobs:
           vulnerability-check: true
           comment-summary-in-pr: on-failure
 
-      - name: "Restore dependencies"
-        run: dotnet restore
-
       - name: "Restore tools"
         run: dotnet tool restore
 
-      - name: "Build server-mcp"
-        run: dotnet build src/Server.Mcp/Server.Mcp.csproj -c Release --no-restore
+      - name: "Restore dependencies"
+        run: dotnet restore
+
+      - name: "Build server-mcp (win-x64)"
+        run: dotnet build src/Server.Mcp/Server.Mcp.csproj --configuration Release --no-restore --runtime win-x64
+
+      - name: "Build server-mcp (win-arm64)"
+        run: dotnet build src/Server.Mcp/Server.Mcp.csproj --configuration Release --no-restore --runtime win-arm64
+
+      - name: "Build server-mcp (osx-arm64)"
+        run: dotnet build src/Server.Mcp/Server.Mcp.csproj --configuration Release --no-restore --runtime osx-arm64
+
+      - name: "Build server-mcp (linux-x64)"
+        run: dotnet build src/Server.Mcp/Server.Mcp.csproj --configuration Release --no-restore --runtime linux-x64
+
+      - name: "Build server-mcp (linux-arm64)"
+        run: dotnet build src/Server.Mcp/Server.Mcp.csproj --configuration Release --no-restore --runtime linux-arm64
+
+      - name: "Pack server-mcp"
+        run: dotnet pack src/Server.Mcp/Server.Mcp.csproj --configuration Release --no-build --no-restore -o ${{ runner.temp }}
