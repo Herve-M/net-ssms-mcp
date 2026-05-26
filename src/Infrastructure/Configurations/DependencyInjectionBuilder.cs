@@ -8,6 +8,7 @@ using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 using ssmsmcp.Domain.Abstractions.Configurations;
+using ssmsmcp.Domain.Abstractions.Databases;
 using ssmsmcp.Domain.Abstractions.Servers;
 using ssmsmcp.Domain.Configurations;
 using ssmsmcp.Infrastructure.Abstractions.Configurations;
@@ -131,6 +132,7 @@ public sealed class DependencyInjectionBuilder(
         services
             .AddSingleton<IServerConnectionFactory, ServerConnectionFactory>()
             .AddSingleton<IServerPort, ServerAdapter>()
+            .AddSingleton<IDatabasePort, DatabaseAdapter>()
             ;
 
         if (EnableHeathChecks)
