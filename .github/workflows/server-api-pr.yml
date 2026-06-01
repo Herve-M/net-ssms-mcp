@@ -45,7 +45,7 @@ jobs:
       #     repo-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: "Dependency review"
-        uses: actions/dependency-review-action@v4
+        uses: actions/dependency-review-action@v5
         with:
           license-check: true
           vulnerability-check: true
