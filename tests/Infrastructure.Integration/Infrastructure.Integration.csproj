@@ -17,7 +17,14 @@
   </ItemGroup>
 
   <ItemGroup>
+<<<<<<< HEAD
     <PackageReference Include="Microsoft.Testing.Platform.MSBuild" />
+=======
+    <PackageReference Include="Testcontainers" />
+    <PackageReference Include="AwesomeAssertions" />
+    <PackageReference Include="Microsoft.Extensions.Options" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+>>>>>>> 424675f (test(infra): wire up Testcontainers packages and InternalsVisibleTo)
     <PackageReference Include="xunit.v3.mtp-v2" />
   </ItemGroup>
 
