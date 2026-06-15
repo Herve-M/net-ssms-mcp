@@ -6,10 +6,10 @@
   <Import Project="$(RepositoryEngineeringDir)Directory.Packages.props" />
   <ItemGroup>
     <PackageVersion Include="Asp.Versioning.OpenApi" Version="10.0.0-rc.1" />
-    <PackageVersion Include="Aspire.Hosting.SqlServer" Version="13.3.1" />
-    <PackageVersion Include="Aspire.Hosting.Testing" Version="13.3.1" />
+    <PackageVersion Include="Aspire.Hosting.SqlServer" Version="13.4.4" />
+    <PackageVersion Include="Aspire.Hosting.Testing" Version="13.4.4" />
     <PackageVersion Include="AwesomeAssertions" Version="9.4.0" />
-    <PackageVersion Include="CommunityToolkit.Aspire.Hosting.McpInspector" Version="13.1.1" />
+    <PackageVersion Include="CommunityToolkit.Aspire.Hosting.McpInspector" Version="13.4.0" />
     <PackageVersion Include="DotNetDiag.HealthChecks.SqlServer" Version="10.0.8" />
     <PackageVersion Include="DotNetDiag.HealthChecks.UI.Client" Version="10.0.7" />
     <PackageVersion Include="FluentValidation" Version="12.1.1" />
