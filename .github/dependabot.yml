@@ -42,6 +42,35 @@ updates:
       timezone: "Asia/Ho_Chi_Minh"
     assignees:
       - "Herve-M"
+    commit-message:
+      prefix: "chore(deps)"
+    groups:
+      microsoft:
+        patterns:
+          - "Microsoft.*"
+      aspire:
+        patterns:
+          - "Aspire.*"
+          - "CommunityToolkit.Aspire.*"
+      opentelemetry:
+        patterns:
+          - "OpenTelemetry.*"
+      modelcontextprotocol:
+        patterns:
+          - "ModelContextProtocol.*"
+      httpApi:
+        patterns:
+          - "Scalar.*"
+          - "Asp.Versioning.*"
+      dotnetdiag:
+        patterns:
+          - "DotNetDiag.*"
+      fluentvalidation:
+        patterns:
+          - "FluentValidation.*"
+      mediator:
+        patterns:
+          - "Mediator.*"
     ignore:
       - dependency-name: "*"
         update-types:
