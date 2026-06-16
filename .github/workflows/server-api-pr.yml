@@ -26,6 +26,8 @@ jobs:
     permissions:
       pull-requests: write
       contents: read
+      actions: read
+      security-events: write
 
     services:
       # see: https://docs.docker.com/build/ci/github-actions/local-registry/
@@ -96,15 +98,31 @@ jobs:
           docker buildx imagetools inspect "$REF" --format '{{ json (index .SBOM "linux/arm64").SPDX }}' > "${{ runner.temp }}/sbom.arm64.json"
 
       - name: "Scan SBOM amd64 (grype, fail on HIGH+)"
+        id: scan-amd64
         uses: anchore/scan-action@v7.4.0
         with:
           sbom: ${{ runner.temp }}/sbom.amd64.json
           severity-cutoff: high
           fail-build: true
 
+      - name: "Upload amd64 SARIF"
+        if: ${{ failure() && steps.scan-amd64.outputs.sarif != '' }}
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: ${{ steps.scan-amd64.outputs.sarif }}
+          category: ${{ matrix.base }}-amd64
+
       - name: "Scan SBOM arm64 (grype, fail on HIGH+)"
+        id: scan-arm64
         uses: anchore/scan-action@v7.4.0
         with:
           sbom: ${{ runner.temp }}/sbom.arm64.json
           severity-cutoff: high
           fail-build: true
+
+      - name: "Upload arm64 SARIF"
+        if: ${{ failure() && steps.scan-arm64.outputs.sarif != '' }}
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: ${{ steps.scan-arm64.outputs.sarif }}
+          category: ${{ matrix.base }}-arm64
