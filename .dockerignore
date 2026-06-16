@@ -1,0 +1,26 @@
+# Build artifacts
+**/bin/
+**/obj/
+**/out/
+
+# VCS / CI (version is injected as a build arg; .git not needed in context)
+.git/
+.github/
+.gitignore
+.gitattributes
+
+# Tests & docs not needed to build the API image
+tests/
+docs/
+
+# IDE / tooling
+.idea/
+.vscode/
+.devcontainer/
+.vsconfig
+*.user
+*.suo
+
+# Local docker bake / compose outputs
+*.tar
+*.tar.gz
