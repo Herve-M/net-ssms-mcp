@@ -37,7 +37,7 @@ jobs:
           - 5000:5000
 
     strategy:
-      fail-fast: false
+      fail-fast: true # no partial results from main branch
       matrix:
         include:
           - base: noble
