@@ -56,9 +56,8 @@ jobs:
 
       - name: "Compute assembly version (MinVer)"
         id: minver
-        # -t api- matches the project's MinVerTagPrefix; the minver-cli tool
-        # does not read the .csproj property, so the prefix is passed here.
-        run: echo "version=$(dotnet minver -t api-)" >> "$GITHUB_OUTPUT"
+        # see: https://github.com/adamralph/minver#options
+        run: echo "version=$(dotnet minver -i -t api-)" >> "$GITHUB_OUTPUT"
 
       - name: "Set up Docker Buildx"
         uses: docker/setup-buildx-action@v4.1.0
@@ -78,9 +77,6 @@ jobs:
           flavor: |
             latest=auto
             suffix=${{ matrix.suffix }},onlatest=true
-          # Release tags are 'api-X.Y.Z' (MinVerTagPrefix=api-), which is not
-          # parseable as semver by metadata-action. So we feed MinVer's computed
-          # version into the semver templating via value=, gated to tag events.
           tags: |
             type=semver,pattern={{version}},value=${{ steps.minver.outputs.version }},enable=${{ startsWith(github.ref, 'refs/tags/') }}
             type=semver,pattern={{major}}.{{minor}},value=${{ steps.minver.outputs.version }},enable=${{ startsWith(github.ref, 'refs/tags/') }}
@@ -88,9 +84,6 @@ jobs:
             type=edge,branch=main
             type=sha
 
-      # Phase 1 — build amd64 only and load locally so it can be scanned
-      # BEFORE anything is published. Attestations are skipped here (they
-      # require a push); the GHA cache is shared with the push phase.
       - name: "Build (amd64) for scan"
         uses: docker/build-push-action@v7.2.0
         with:
@@ -120,9 +113,6 @@ jobs:
           severity-cutoff: high
           fail-build: true
 
-      # Phase 2 — gate passed: build the full multi-arch manifest list and
-      # push it (BuildKit assembles the manifest automatically). amd64 layers
-      # are reused from the scan phase via the GHA cache; arm64 is built fresh.
       - name: "Build & push multi-arch (with attestations)"
         uses: docker/build-push-action@v7.2.0
         with:
