@@ -7,6 +7,7 @@ ARG BASE_IMAGE=mcr.microsoft.com/dotnet/aspnet:10.0-noble-chiseled-extra
 FROM --platform=$BUILDPLATFORM ${BUILD_IMAGE} AS build
 ARG TARGETARCH
 ARG VERSION=0.1.0-dev
+ARG BUILDKIT_SBOM_SCAN_STAGE=true
 WORKDIR /src
 
 # Copy build infrastructure + project files first for restore-layer caching.
