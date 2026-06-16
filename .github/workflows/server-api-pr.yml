@@ -65,6 +65,17 @@ jobs:
             type=ref,event=pr
             type=sha
 
+      # docker build --check
+      - name: "Dockerfile build check"
+        uses: docker/build-push-action@v7.2.0
+        with:
+          context: .
+          file: src/Server.Api/Dockerfile
+          call: check
+          build-args: |
+            BASE_IMAGE=${{ matrix.image }}
+            VERSION=0.0.0-pr.${{ github.event.pull_request.number }}
+
       # Build amd64 and load locally so the PR can be scanned. No push.
       - name: "Build (amd64) for scan"
         uses: docker/build-push-action@v7.2.0
