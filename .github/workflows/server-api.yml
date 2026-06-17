@@ -16,14 +16,36 @@ on:
 
 env:
   DOTNET_NOLOGO: true
+  REGISTRY: ghcr.io
+  IMAGE: herve-m/net-ssms-mcp
 
 jobs:
   build:
-    runs-on: ubuntu-slim
+    runs-on: ubuntu-latest
 
     permissions:
       packages: write
       contents: read
+      actions: read
+      security-events: write
+
+    services:
+      # see: https://docs.docker.com/build/ci/github-actions/local-registry/
+      registry:
+        image: registry:2
+        ports:
+          - 5000:5000
+
+    strategy:
+      fail-fast: true # no partial results from main branch
+      matrix:
+        include:
+          - base: noble
+            image: "mcr.microsoft.com/dotnet/aspnet:10.0-noble-chiseled-extra"
+            suffix: ""
+          - base: azurelinux
+            image: "mcr.microsoft.com/dotnet/aspnet:10.0-azurelinux3.0-distroless-extra"
+            suffix: "-azurelinux"
 
     steps:
       - uses: actions/checkout@v6.0.2
@@ -38,14 +60,113 @@ jobs:
         with:
           dotnet-version: 10.0.x
 
-      - name: "Restore dependencies"
-        run: dotnet restore
-
       - name: "Restore tools"
         run: dotnet tool restore
 
-      - name: Log in to registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      - name: "Compute assembly version (MinVer)"
+        id: minver
+        # see: https://github.com/adamralph/minver#options
+        run: echo "version=$(dotnet minver -i -t api-)" >> "$GITHUB_OUTPUT"
 
-      - name: "Publish Container"
-        run: dotnet publish src/Server.Api/Server.Api.csproj --configuration Release --no-restore /t:PublishContainer -p ContainerRegistry=ghcr.io
+      - name: "Set up Docker Buildx"
+        uses: docker/setup-buildx-action@v4.1.0
+        with:
+          driver-opts: network=host
+
+      - name: "Log in to GHCR"
+        uses: docker/login-action@v4.2.0
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: "Docker metadata"
+        id: meta
+        uses: docker/metadata-action@v6.1.0
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE }}
+          flavor: |
+            latest=auto
+            suffix=${{ matrix.suffix }},onlatest=true
+          tags: |
+            type=semver,pattern={{version}},value=${{ steps.minver.outputs.version }},enable=${{ startsWith(github.ref, 'refs/tags/') }}
+            type=semver,pattern={{major}}.{{minor}},value=${{ steps.minver.outputs.version }},enable=${{ startsWith(github.ref, 'refs/tags/') }}
+            type=semver,pattern={{major}},value=${{ steps.minver.outputs.version }},enable=${{ startsWith(github.ref, 'refs/tags/') }}
+            type=edge,branch=main
+            type=sha
+
+      - name: "Build multi-arch -> local registry"
+        uses: docker/build-push-action@v7.2.0
+        with:
+          context: .
+          file: src/Server.Api/Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          sbom: true
+          provenance: mode=max
+          build-args: |
+            BASE_IMAGE=${{ matrix.image }}
+            VERSION=${{ steps.minver.outputs.version }}
+          tags: localhost:5000/${{ env.IMAGE }}:ci-${{ matrix.base }}
+          cache-from: type=gha,scope=${{ matrix.base }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.base }}
+
+      - name: "Extract per-platform SBOM (SPDX)"
+        run: |
+          REF="localhost:5000/${{ env.IMAGE }}:ci-${{ matrix.base }}"
+          docker buildx imagetools inspect "$REF" --format '{{ json (index .SBOM "linux/amd64").SPDX }}' > "${{ runner.temp }}/sbom.amd64.json"
+          docker buildx imagetools inspect "$REF" --format '{{ json (index .SBOM "linux/arm64").SPDX }}' > "${{ runner.temp }}/sbom.arm64.json"
+
+      - name: "Upload SBOM artifacts"
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom-${{ matrix.base }}
+          path: ${{ runner.temp }}/sbom.*.json
+
+      - name: "Scan SBOM amd64 (grype, fail on HIGH+)"
+        id: scan-amd64
+        uses: anchore/scan-action@v7.4.0
+        with:
+          sbom: ${{ runner.temp }}/sbom.amd64.json
+          severity-cutoff: high
+          fail-build: false
+
+      - name: "Upload amd64 SARIF"
+        if: ${{ !cancelled() && steps.scan-amd64.outputs.sarif != '' }}
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: ${{ steps.scan-amd64.outputs.sarif }}
+          category: ${{ matrix.base }}-amd64
+
+      - name: "Scan SBOM arm64 (grype, fail on HIGH+)"
+        id: scan-arm64
+        uses: anchore/scan-action@v7.4.0
+        with:
+          sbom: ${{ runner.temp }}/sbom.arm64.json
+          severity-cutoff: high
+          fail-build: false
+
+      - name: "Upload arm64 SARIF"
+        if: ${{ !cancelled() && steps.scan-arm64.outputs.sarif != '' }}
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: ${{ steps.scan-arm64.outputs.sarif }}
+          category: ${{ matrix.base }}-arm64
+
+      - name: "Build & push multi-arch -> GHCR"
+        uses: docker/build-push-action@v7.2.0
+        with:
+          context: .
+          file: src/Server.Api/Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          sbom: true
+          provenance: mode=max
+          build-args: |
+            BASE_IMAGE=${{ matrix.image }}
+            VERSION=${{ steps.minver.outputs.version }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          annotations: ${{ steps.meta.outputs.annotations }}
+          cache-from: type=gha,scope=${{ matrix.base }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.base }}

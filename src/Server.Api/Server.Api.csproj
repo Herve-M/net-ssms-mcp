@@ -6,19 +6,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>ssmsmcp.$(MSBuildProjectName)</RootNamespace>
     <AssemblyName>ssmsmcp.$(MSBuildProjectName)</AssemblyName>
-    <InvariantGlobalization>true</InvariantGlobalization>
+    <InvariantGlobalization>false</InvariantGlobalization>
     <StaticWebAssetsEnabled>false</StaticWebAssetsEnabled>
     <MinVerTagPrefix>api-</MinVerTagPrefix>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <LocalRegistry>Docker</LocalRegistry>
-    <ContainerBaseImage>mcr.microsoft.com/dotnet/aspnet:10.0-noble-chiseled</ContainerBaseImage>
-    <ContainerRepository>Herve-M/net-ssms-mcp</ContainerRepository>
-    <ContainerTitle>SSMS MCP (HTTP) API</ContainerTitle>
-    <ContainerImageFormat>OCI</ContainerImageFormat>
-    <ContainerRuntimeIdentifiers>linux-x64;linux-arm64</ContainerRuntimeIdentifiers>
-    <!-- <ContainerImageTags>main;$(MinVerMajor);$(MinVerMajor).$(MinVerMinor);</ContainerImageTags> -->
   </PropertyGroup>
 
   <ItemGroup>
@@ -63,11 +53,5 @@
     <OpenApiDocumentsDirectory>.</OpenApiDocumentsDirectory>
     <OpenApiGenerateDocumentsOptions>--document-name v1 --file-name openapi-v1</OpenApiGenerateDocumentsOptions>
   </PropertyGroup>
-
-  <Target Name="_versioning" AfterTargets="MinVer">
-    <PropertyGroup>
-      <ContainerImageTags>main;$(MinVerMajor);$(MinVerMajor).$(MinVerMinor);</ContainerImageTags>
-    </PropertyGroup>
-  </Target>
 
 </Project>
