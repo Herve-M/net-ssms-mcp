@@ -132,7 +132,7 @@ jobs:
           fail-build: false
 
       - name: "Upload amd64 SARIF"
-        if: ${{ failure() && steps.scan-amd64.outputs.sarif != '' }}
+        if: ${{ !cancelled() && steps.scan-amd64.outputs.sarif != '' }}
         uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: ${{ steps.scan-amd64.outputs.sarif }}
@@ -147,7 +147,7 @@ jobs:
           fail-build: false
 
       - name: "Upload arm64 SARIF"
-        if: ${{ failure() && steps.scan-arm64.outputs.sarif != '' }}
+        if: ${{ !cancelled() && steps.scan-arm64.outputs.sarif != '' }}
         uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: ${{ steps.scan-arm64.outputs.sarif }}
