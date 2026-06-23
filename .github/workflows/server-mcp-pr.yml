@@ -48,13 +48,13 @@ jobs:
       - name: "Restore dependencies"
         run: dotnet restore
 
-      - name: "Build server-mcp"
-        run: dotnet build src/Server.Mcp/Server.Mcp.csproj -c Release --no-restore -r linux-x64
+      - name: "Publish server-mcp (linux-x64, compile gate)"
+        run: dotnet publish src/Server.Mcp/Server.Mcp.csproj -c Release --no-restore -r linux-x64
 
       - name: "Generate SBOM"
         uses: anchore/sbom-action@v0.24.0
         with:
-          path: src/Server.Mcp/bin/Release/net10.0/linux-x64
+          path: src/Server.Mcp/bin/Release/net10.0/linux-x64/publish
           format: spdx-json
           output-file: ${{ runner.temp }}/sbom.spdx.json
           artifact-name: sbom-server-mcp.spdx.json
@@ -69,11 +69,11 @@ jobs:
           only-fixed: true
 
       - name: "Upload SARIF"
-        if: ${{ !cancelled() && steps.scan.outputs.sarif != '' }}
+        if: ${{ !cancelled() && steps.scan.outputs.sarif != '' && github.event.pull_request.head.repo.fork == false }}
         uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: ${{ steps.scan.outputs.sarif }}
           category: server-mcp
 
-      - name: "Pack server-mcp (no publish)"
+      - name: "Pack server-mcp (no push)"
         run: dotnet pack src/Server.Mcp/Server.Mcp.csproj -c Release --no-restore -o ${{ runner.temp }}

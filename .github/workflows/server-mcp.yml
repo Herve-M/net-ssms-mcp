@@ -46,7 +46,7 @@ jobs:
       - name: "Restore dependencies"
         run: dotnet restore
 
-      - name: "Resolve build props (release vs -beta)"
+      - name: "Resolve debug symbol props (embed on untagged builds)"
         id: props
         run: |
           if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
@@ -55,13 +55,13 @@ jobs:
             echo "extra=-p:DebugType=embedded" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: "Build server-mcp"
-        run: dotnet build src/Server.Mcp/Server.Mcp.csproj -c Release --no-restore -r linux-x64 ${{ steps.props.outputs.extra }}
+      - name: "Publish server-mcp (linux-x64, compile gate)"
+        run: dotnet publish src/Server.Mcp/Server.Mcp.csproj -c Release --no-restore -r linux-x64 ${{ steps.props.outputs.extra }}
 
       - name: "Generate SBOM"
         uses: anchore/sbom-action@v0.24.0
         with:
-          path: src/Server.Mcp/bin/Release/net10.0/linux-x64
+          path: src/Server.Mcp/bin/Release/net10.0/linux-x64/publish
           format: spdx-json
           output-file: ${{ runner.temp }}/sbom.spdx.json
           artifact-name: sbom-server-mcp.spdx.json
