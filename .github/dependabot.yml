@@ -75,3 +75,6 @@ updates:
       - dependency-name: "*"
         update-types:
           - "version-update:semver-major"
+      # Ignore Aspire and handle it manually with aspire cli
+      - dependency-name: "Aspire.*"
+      - dependency-name: "CommunityToolkit.Aspire.*"
