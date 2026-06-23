@@ -57,6 +57,7 @@ updates:
           - "OpenTelemetry.*"
       modelcontextprotocol:
         patterns:
+          - "ModelContextProtocol"
           - "ModelContextProtocol.*"
       httpApi:
         patterns:
