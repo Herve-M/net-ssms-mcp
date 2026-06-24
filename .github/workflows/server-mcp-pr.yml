@@ -24,6 +24,8 @@ jobs:
     permissions:
       pull-requests: write
       contents: read
+      actions: read
+      security-events: write
 
     steps:
       - uses: actions/checkout@v6.0.2
@@ -32,15 +34,6 @@ jobs:
         uses: actions/setup-dotnet@v5.3.0
         with:
           dotnet-version: 10.0.x
-
-      #TODO: find a up to date dotnet format action that supports recent updates
-      # - name: "dotnet format"
-      #   uses: jfversluis/dotnet-format@v1.0.9
-      #   with:
-      #     action: check
-      #     only-changed-files: true
-      #     fail-fast: true
-      #     repo-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: "Dependency review"
         uses: actions/dependency-review-action@v5
@@ -55,20 +48,32 @@ jobs:
       - name: "Restore dependencies"
         run: dotnet restore
 
-      - name: "Build server-mcp (win-x64)"
-        run: dotnet build src/Server.Mcp/Server.Mcp.csproj --configuration Release --no-restore --runtime win-x64
+      - name: "Publish server-mcp (linux-x64, compile gate)"
+        run: dotnet publish src/Server.Mcp/Server.Mcp.csproj -c Release --no-restore -r linux-x64
 
-      - name: "Build server-mcp (win-arm64)"
-        run: dotnet build src/Server.Mcp/Server.Mcp.csproj --configuration Release --no-restore --runtime win-arm64
+      - name: "Generate SBOM"
+        uses: anchore/sbom-action@v0.24.0
+        with:
+          path: src/Server.Mcp/bin/Release/net10.0/linux-x64/publish
+          format: spdx-json
+          output-file: ${{ runner.temp }}/sbom.spdx.json
+          artifact-name: sbom-server-mcp.spdx.json
 
-      - name: "Build server-mcp (osx-arm64)"
-        run: dotnet build src/Server.Mcp/Server.Mcp.csproj --configuration Release --no-restore --runtime osx-arm64
+      - name: "Scan SBOM"
+        id: scan
+        uses: anchore/scan-action@v7.4.0
+        with:
+          sbom: ${{ runner.temp }}/sbom.spdx.json
+          severity-cutoff: critical
+          fail-build: false
+          only-fixed: true
 
-      - name: "Build server-mcp (linux-x64)"
-        run: dotnet build src/Server.Mcp/Server.Mcp.csproj --configuration Release --no-restore --runtime linux-x64
+      - name: "Upload SARIF"
+        if: ${{ !cancelled() && steps.scan.outputs.sarif != '' && github.event.pull_request.head.repo.fork == false }}
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: ${{ steps.scan.outputs.sarif }}
+          category: server-mcp
 
-      - name: "Build server-mcp (linux-arm64)"
-        run: dotnet build src/Server.Mcp/Server.Mcp.csproj --configuration Release --no-restore --runtime linux-arm64
-
-      - name: "Pack server-mcp"
-        run: dotnet pack src/Server.Mcp/Server.Mcp.csproj --configuration Release --no-build --no-restore -o ${{ runner.temp }}
+      - name: "Pack server-mcp (no push)"
+        run: dotnet pack src/Server.Mcp/Server.Mcp.csproj -c Release --no-restore -o ${{ runner.temp }}

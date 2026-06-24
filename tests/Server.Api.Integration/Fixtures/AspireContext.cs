@@ -1,4 +1,5 @@
 using Aspire.Hosting;
+using Aspire.Hosting.ApplicationModel;
 using Microsoft.Extensions.Logging;
 using ModelContextProtocol.Client;
 
@@ -8,6 +9,9 @@ public class AspireContext
     : IAsyncLifetime
 {
     public static readonly TimeSpan DefaultTimeout = TimeSpan.FromSeconds(30);
+
+    private readonly SemaphoreSlim _startGate = new(1, 1);
+    private bool _started;
 
     public DistributedApplication Context { get; private set; } = default!;
 
@@ -43,6 +47,50 @@ public class AspireContext
     public async ValueTask DisposeAsync()
     {
         await Context.DisposeAsync();
+        _startGate.Dispose();
+    }
+
+    /// <summary>
+    /// Starts the distributed application once. Safe to call from multiple tests sharing the fixture.
+    /// </summary>
+    public async Task EnsureStartedAsync(CancellationToken cancellationToken)
+    {
+        if (_started)
+        {
+            return;
+        }
+
+        await _startGate.WaitAsync(cancellationToken);
+        try
+        {
+            if (!_started)
+            {
+                await Context.StartAsync(cancellationToken);
+                _started = true;
+            }
+        }
+        finally
+        {
+            _startGate.Release();
+        }
+    }
+
+    /// <summary>
+    /// Ensures the host is started and explicitly starts the (explicit-start) "http-api" resource,
+    /// waiting for it and its dependencies to become healthy.
+    /// </summary>
+    public async Task<ResourceEvent> StartApiAsync(CancellationToken cancellationToken)
+    {
+        await EnsureStartedAsync(cancellationToken);
+
+        await Context.ResourceCommands.ExecuteCommandAsync("http-api", KnownResourceCommands.StartCommand, cancellationToken);
+
+        ResourceEvent apiResource = await Context.ResourceNotifications
+            .WaitForResourceHealthyAsync("http-api", cancellationToken);
+        await Context.ResourceNotifications
+            .WaitForDependenciesAsync(apiResource.Resource, cancellationToken);
+
+        return apiResource;
     }
 
     public Task<McpClient> GetMcpClientAsync()

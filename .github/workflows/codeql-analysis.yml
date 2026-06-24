@@ -19,7 +19,7 @@ jobs:
   analyze:
     if: ${{ !github.event.pull_request.draft }}
     name: Analyze
-    runs-on: ubuntu-slim
+    runs-on: ubuntu-latest
 
     permissions:
       actions: read

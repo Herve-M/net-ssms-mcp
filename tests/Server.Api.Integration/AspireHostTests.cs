@@ -24,9 +24,7 @@ public class HostTests(AspireContext aspireContext)
     public async Task ApiHost_Healthcheck_ShouldSucceed()
     {
         // Arrange
-        await _aspireContext.Context.StartAsync(TestContext.Current.CancellationToken);
-        var apiR = await _aspireContext.Context.ResourceNotifications.WaitForResourceHealthyAsync("http-api", TestContext.Current.CancellationToken);
-        await _aspireContext.Context.ResourceNotifications.WaitForDependenciesAsync(apiR.Resource, TestContext.Current.CancellationToken);
+        await _aspireContext.StartApiAsync(TestContext.Current.CancellationToken);
         using var httpClient = _aspireContext.Context.CreateHttpClient("http-api");
 
 
@@ -42,7 +40,7 @@ public class HostTests(AspireContext aspireContext)
     public async Task Mcp_Ping_ShouldSucceed()
     {
         // Arrange
-        await _aspireContext.Context.StartAsync(TestContext.Current.CancellationToken);
+        await _aspireContext.StartApiAsync(TestContext.Current.CancellationToken);
         await using var mcpClient = await _aspireContext.GetMcpClientAsync();
 
         // Act

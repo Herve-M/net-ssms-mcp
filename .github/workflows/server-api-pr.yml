@@ -15,34 +15,40 @@ on:
 
 env:
   DOTNET_NOLOGO: true
+  REGISTRY: ghcr.io
+  IMAGE: herve-m/net-ssms-mcp
 
 jobs:
   build:
     if: ${{ !github.event.pull_request.draft }}
-    runs-on: ubuntu-slim
+    runs-on: ubuntu-latest
 
     permissions:
       pull-requests: write
       contents: read
+      actions: read
+      security-events: write
+
+    services:
+      # see: https://docs.docker.com/build/ci/github-actions/local-registry/
+      registry:
+        image: registry:2
+        ports:
+          - 5000:5000
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - base: noble
+            image: "mcr.microsoft.com/dotnet/aspnet:10.0-noble-chiseled-extra"
+          - base: azurelinux
+            image: "mcr.microsoft.com/dotnet/aspnet:10.0-azurelinux3.0-distroless-extra"
 
     steps:
       - uses: actions/checkout@v6.0.2
 
       - run: git fetch --depth=1 origin ${{ github.base_ref }}
-
-      - name: "Setup .NET"
-        uses: actions/setup-dotnet@v5.3.0
-        with:
-          dotnet-version: 10.0.x
-
-      #TODO: find a up to date dotnet format action that supports recent updates
-      # - name: "dotnet format"
-      #   uses: jfversluis/dotnet-format@v1.0.9
-      #   with:
-      #     action: check
-      #     only-changed-files: true
-      #     fail-fast: true
-      #     repo-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: "Dependency review"
         uses: actions/dependency-review-action@v5
@@ -51,46 +57,72 @@ jobs:
           vulnerability-check: true
           comment-summary-in-pr: on-failure
 
-      - name: "Restore tools"
-        run: dotnet tool restore
+      - name: "Set up Docker Buildx"
+        uses: docker/setup-buildx-action@v4.1.0
+        with:
+          driver-opts: network=host
 
-      - name: "Restore dependencies"
-        run: dotnet restore
+      # docker build --check
+      - name: "Dockerfile build check"
+        uses: docker/build-push-action@v7.2.0
+        with:
+          context: .
+          file: src/Server.Api/Dockerfile
+          call: check
+          build-args: |
+            BASE_IMAGE=${{ matrix.image }}
+            VERSION=0.1.0-pr.${{ github.event.pull_request.number }}
 
-      # NOTE: publish with multiple runtimes requires build this first, then each RID separately
-      - name: "Build server-api (linux-arm64)"
-        run: dotnet build src/Server.Api/Server.Api.csproj --configuration Release --runtime linux-arm64 --no-restore
+      - name: "Build multi-arch -> local registry"
+        uses: docker/build-push-action@v7.2.0
+        with:
+          context: .
+          file: src/Server.Api/Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          sbom: true
+          provenance: mode=max
+          build-args: |
+            BASE_IMAGE=${{ matrix.image }}
+            VERSION=0.1.0-pr.${{ github.event.pull_request.number }}
+          tags: localhost:5000/${{ env.IMAGE }}:pr-${{ github.event.pull_request.number }}-${{ matrix.base }}
+          cache-from: type=gha,scope=${{ matrix.base }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.base }}
 
-      - name: "Build server-api (linux-x64)"
-        run: dotnet build src/Server.Api/Server.Api.csproj --configuration Release --runtime linux-x64 --no-restore
+      - name: "Extract per-platform SBOM (SPDX)"
+        run: |
+          REF="localhost:5000/${{ env.IMAGE }}:pr-${{ github.event.pull_request.number }}-${{ matrix.base }}"
+          docker buildx imagetools inspect "$REF" --format '{{ json (index .SBOM "linux/amd64").SPDX }}' > "${{ runner.temp }}/sbom.amd64.json"
+          docker buildx imagetools inspect "$REF" --format '{{ json (index .SBOM "linux/arm64").SPDX }}' > "${{ runner.temp }}/sbom.arm64.json"
 
-      #NOTE: can´t use --no-build --no-restore as publish for containers do something special?
-      - name: "Re-Build and Publish multi-arch container"
-        run: dotnet publish src/Server.Api/Server.Api.csproj --configuration Release  /t:PublishContainer -p ContainerArchiveOutputPath=${{ runner.temp }}/ssms-mcp-api.tar.gz
+      - name: "Scan SBOM amd64 (grype, fail on CRITICAL+)"
+        id: scan-amd64
+        uses: anchore/scan-action@v7.4.0
+        with:
+          sbom: ${{ runner.temp }}/sbom.amd64.json
+          severity-cutoff: critical
+          fail-build: false
+          only-fixed: true
 
-      #TODO: find replacement multi-arch not supported, https://github.com/anchore/syft/issues/1545,
-      # - name: "Container SBOM"
-      #   uses: anchore/sbom-action@v0.24.0
-      #   with:
-      #     file: ${{ runner.temp }}/ssms-mcp-api.tar.gz
-      #     artifact-name: ssms-mcp-api-oci.spdx.json
+      - name: "Upload amd64 SARIF"
+        if: ${{ !cancelled() && steps.scan-amd64.outputs.sarif != '' }}
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: ${{ steps.scan-amd64.outputs.sarif }}
+          category: ${{ matrix.base }}-amd64
 
-      # - name: "Scan SBOM"
-      #   uses: anchore/scan-action@v7.4.0
-      #   with:
-      #     sbom: ${{ runner.temp }}/ssms-mcp-api-oci.spdx.json
-      #     fail-build: true
-      #     severity-cutoff: high
+      - name: "Scan SBOM arm64 (grype, fail on CRITICAL+)"
+        id: scan-arm64
+        uses: anchore/scan-action@v7.4.0
+        with:
+          sbom: ${{ runner.temp }}/sbom.arm64.json
+          severity-cutoff: critical
+          fail-build: false
+          only-fixed: true
 
-      #TODO: find replacement for oasdiff that works without docker
-      # - name: Extract base and head OpenAPI files
-      #   run: |
-      #     git show "origin/${{ github.base_ref }}:src/Server.Api/openapi-v1.json" > ${{ runner.temp }}/openapi-v1-base.yaml
-      #     git show "HEAD:src/Server.Api/openapi-v1.json" > ${{ runner.temp }}/openapi-v1-head.yaml
-
-      # - name: "API breaking change detection"
-      #   uses: oasdiff/oasdiff-action/breaking@v0.0.47
-      #   with:
-      #     base: "origin/${{ github.base_ref }}:src/Server.Api/openapi-v1.json"
-      #     revision: "HEAD:src/Server.Api/openapi-v1.json"
-      #     fail-on: ERR
+      - name: "Upload arm64 SARIF"
+        if: ${{ !cancelled() && steps.scan-arm64.outputs.sarif != '' }}
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: ${{ steps.scan-arm64.outputs.sarif }}
+          category: ${{ matrix.base }}-arm64

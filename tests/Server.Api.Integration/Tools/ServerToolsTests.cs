@@ -16,8 +16,7 @@ public class ServerToolsTests(AspireContext aspireContext)
     public async Task ListToolsAsync_ShouldSucceed()
     {
         // Arrange
-        await _aspireContext.Context.StartAsync(TestContext.Current.CancellationToken);
-        await _aspireContext.Context.ResourceNotifications.WaitForResourceHealthyAsync("http-api", TestContext.Current.CancellationToken);
+        await _aspireContext.StartApiAsync(TestContext.Current.CancellationToken);
         await using var mcpClient = await _aspireContext.GetMcpClientAsync();
 
         // Act
@@ -48,9 +47,7 @@ public class ServerToolsTests(AspireContext aspireContext)
     public async Task GetServersList_ShouldSucceed()
     {
         // Arrange
-        await _aspireContext.Context.StartAsync(TestContext.Current.CancellationToken);
-        var apiR = await _aspireContext.Context.ResourceNotifications.WaitForResourceHealthyAsync("http-api", TestContext.Current.CancellationToken);
-        await _aspireContext.Context.ResourceNotifications.WaitForDependenciesAsync(apiR.Resource, TestContext.Current.CancellationToken);
+        await _aspireContext.StartApiAsync(TestContext.Current.CancellationToken);
         await using var mcpClient = await _aspireContext.GetMcpClientAsync();
 
 
@@ -70,9 +67,7 @@ public class ServerToolsTests(AspireContext aspireContext)
     public async Task GetServerVersion_PerServer_ShouldSucceed(string serverName)
     {
         // Arrange
-        await _aspireContext.Context.StartAsync(TestContext.Current.CancellationToken);
-        var apiR = await _aspireContext.Context.ResourceNotifications.WaitForResourceHealthyAsync("http-api", TestContext.Current.CancellationToken);
-        await _aspireContext.Context.ResourceNotifications.WaitForDependenciesAsync(apiR.Resource, TestContext.Current.CancellationToken);
+        await _aspireContext.StartApiAsync(TestContext.Current.CancellationToken);
         await using var mcpClient = await _aspireContext.GetMcpClientAsync();
 
         CallToolRequestParams requestParams = new CallToolRequestParams
@@ -103,9 +98,7 @@ public class ServerToolsTests(AspireContext aspireContext)
     [InlineData("2025")]
     public async Task GetServerOverview_PerServer_ShouldSucceed(string serverName)
     {
-        await _aspireContext.Context.StartAsync(TestContext.Current.CancellationToken);
-        var apiR = await _aspireContext.Context.ResourceNotifications.WaitForResourceHealthyAsync("http-api", TestContext.Current.CancellationToken);
-        await _aspireContext.Context.ResourceNotifications.WaitForDependenciesAsync(apiR.Resource, TestContext.Current.CancellationToken);
+        await _aspireContext.StartApiAsync(TestContext.Current.CancellationToken);
         await using var mcpClient = await _aspireContext.GetMcpClientAsync();
 
         CallToolRequestParams requestParams = new CallToolRequestParams
@@ -130,9 +123,7 @@ public class ServerToolsTests(AspireContext aspireContext)
     [InlineData("2025")]
     public async Task GetServerAvailability_PerServer_ShouldSucceed(string serverName)
     {
-        await _aspireContext.Context.StartAsync(TestContext.Current.CancellationToken);
-        var apiR = await _aspireContext.Context.ResourceNotifications.WaitForResourceHealthyAsync("http-api", TestContext.Current.CancellationToken);
-        await _aspireContext.Context.ResourceNotifications.WaitForDependenciesAsync(apiR.Resource, TestContext.Current.CancellationToken);
+        await _aspireContext.StartApiAsync(TestContext.Current.CancellationToken);
         await using var mcpClient = await _aspireContext.GetMcpClientAsync();
 
         CallToolRequestParams requestParams = new CallToolRequestParams
@@ -157,9 +148,7 @@ public class ServerToolsTests(AspireContext aspireContext)
     [InlineData("2025")]
     public async Task GetServerCapacity_PerServer_ShouldSucceed(string serverName)
     {
-        await _aspireContext.Context.StartAsync(TestContext.Current.CancellationToken);
-        var apiR = await _aspireContext.Context.ResourceNotifications.WaitForResourceHealthyAsync("http-api", TestContext.Current.CancellationToken);
-        await _aspireContext.Context.ResourceNotifications.WaitForDependenciesAsync(apiR.Resource, TestContext.Current.CancellationToken);
+        await _aspireContext.StartApiAsync(TestContext.Current.CancellationToken);
         await using var mcpClient = await _aspireContext.GetMcpClientAsync();
 
         CallToolRequestParams requestParams = new CallToolRequestParams
@@ -184,9 +173,7 @@ public class ServerToolsTests(AspireContext aspireContext)
     [InlineData("2025")]
     public async Task GetServerConnectivity_PerServer_ShouldSucceed(string serverName)
     {
-        await _aspireContext.Context.StartAsync(TestContext.Current.CancellationToken);
-        var apiR = await _aspireContext.Context.ResourceNotifications.WaitForResourceHealthyAsync("http-api", TestContext.Current.CancellationToken);
-        await _aspireContext.Context.ResourceNotifications.WaitForDependenciesAsync(apiR.Resource, TestContext.Current.CancellationToken);
+        await _aspireContext.StartApiAsync(TestContext.Current.CancellationToken);
         await using var mcpClient = await _aspireContext.GetMcpClientAsync();
 
         CallToolRequestParams requestParams = new CallToolRequestParams
@@ -211,9 +198,7 @@ public class ServerToolsTests(AspireContext aspireContext)
     [InlineData("2025")]
     public async Task GetServerDatabases_PerServer_ShouldSucceed(string serverName)
     {
-        await _aspireContext.Context.StartAsync(TestContext.Current.CancellationToken);
-        var apiR = await _aspireContext.Context.ResourceNotifications.WaitForResourceHealthyAsync("http-api", TestContext.Current.CancellationToken);
-        await _aspireContext.Context.ResourceNotifications.WaitForDependenciesAsync(apiR.Resource, TestContext.Current.CancellationToken);
+        await _aspireContext.StartApiAsync(TestContext.Current.CancellationToken);
         await using var mcpClient = await _aspireContext.GetMcpClientAsync();
 
         CallToolRequestParams requestParams = new CallToolRequestParams
@@ -238,9 +223,7 @@ public class ServerToolsTests(AspireContext aspireContext)
     [InlineData("2025")]
     public async Task GetServerEngine_PerServer_ShouldSucceed(string serverName)
     {
-        await _aspireContext.Context.StartAsync(TestContext.Current.CancellationToken);
-        var apiR = await _aspireContext.Context.ResourceNotifications.WaitForResourceHealthyAsync("http-api", TestContext.Current.CancellationToken);
-        await _aspireContext.Context.ResourceNotifications.WaitForDependenciesAsync(apiR.Resource, TestContext.Current.CancellationToken);
+        await _aspireContext.StartApiAsync(TestContext.Current.CancellationToken);
         await using var mcpClient = await _aspireContext.GetMcpClientAsync();
 
         CallToolRequestParams requestParams = new CallToolRequestParams
@@ -265,9 +248,7 @@ public class ServerToolsTests(AspireContext aspireContext)
     [InlineData("2025")]
     public async Task GetServerFeatures_PerServer_ShouldSucceed(string serverName)
     {
-        await _aspireContext.Context.StartAsync(TestContext.Current.CancellationToken);
-        var apiR = await _aspireContext.Context.ResourceNotifications.WaitForResourceHealthyAsync("http-api", TestContext.Current.CancellationToken);
-        await _aspireContext.Context.ResourceNotifications.WaitForDependenciesAsync(apiR.Resource, TestContext.Current.CancellationToken);
+        await _aspireContext.StartApiAsync(TestContext.Current.CancellationToken);
         await using var mcpClient = await _aspireContext.GetMcpClientAsync();
 
         CallToolRequestParams requestParams = new CallToolRequestParams
@@ -292,9 +273,7 @@ public class ServerToolsTests(AspireContext aspireContext)
     [InlineData("2025")]
     public async Task GetServerIdentity_PerServer_ShouldSucceed(string serverName)
     {
-        await _aspireContext.Context.StartAsync(TestContext.Current.CancellationToken);
-        var apiR = await _aspireContext.Context.ResourceNotifications.WaitForResourceHealthyAsync("http-api", TestContext.Current.CancellationToken);
-        await _aspireContext.Context.ResourceNotifications.WaitForDependenciesAsync(apiR.Resource, TestContext.Current.CancellationToken);
+        await _aspireContext.StartApiAsync(TestContext.Current.CancellationToken);
         await using var mcpClient = await _aspireContext.GetMcpClientAsync();
 
         CallToolRequestParams requestParams = new CallToolRequestParams
@@ -319,9 +298,7 @@ public class ServerToolsTests(AspireContext aspireContext)
     [InlineData("2025")]
     public async Task GetServerLocalization_PerServer_ShouldSucceed(string serverName)
     {
-        await _aspireContext.Context.StartAsync(TestContext.Current.CancellationToken);
-        var apiR = await _aspireContext.Context.ResourceNotifications.WaitForResourceHealthyAsync("http-api", TestContext.Current.CancellationToken);
-        await _aspireContext.Context.ResourceNotifications.WaitForDependenciesAsync(apiR.Resource, TestContext.Current.CancellationToken);
+        await _aspireContext.StartApiAsync(TestContext.Current.CancellationToken);
         await using var mcpClient = await _aspireContext.GetMcpClientAsync();
 
         CallToolRequestParams requestParams = new CallToolRequestParams
@@ -346,9 +323,7 @@ public class ServerToolsTests(AspireContext aspireContext)
     [InlineData("2025")]
     public async Task GetServerPlatform_PerServer_ShouldSucceed(string serverName)
     {
-        await _aspireContext.Context.StartAsync(TestContext.Current.CancellationToken);
-        var apiR = await _aspireContext.Context.ResourceNotifications.WaitForResourceHealthyAsync("http-api", TestContext.Current.CancellationToken);
-        await _aspireContext.Context.ResourceNotifications.WaitForDependenciesAsync(apiR.Resource, TestContext.Current.CancellationToken);
+        await _aspireContext.StartApiAsync(TestContext.Current.CancellationToken);
         await using var mcpClient = await _aspireContext.GetMcpClientAsync();
 
         CallToolRequestParams requestParams = new CallToolRequestParams
@@ -373,9 +348,7 @@ public class ServerToolsTests(AspireContext aspireContext)
     [InlineData("2025")]
     public async Task GetServerSecurity_PerServer_ShouldSucceed(string serverName)
     {
-        await _aspireContext.Context.StartAsync(TestContext.Current.CancellationToken);
-        var apiR = await _aspireContext.Context.ResourceNotifications.WaitForResourceHealthyAsync("http-api", TestContext.Current.CancellationToken);
-        await _aspireContext.Context.ResourceNotifications.WaitForDependenciesAsync(apiR.Resource, TestContext.Current.CancellationToken);
+        await _aspireContext.StartApiAsync(TestContext.Current.CancellationToken);
         await using var mcpClient = await _aspireContext.GetMcpClientAsync();
 
         CallToolRequestParams requestParams = new CallToolRequestParams
@@ -400,9 +373,7 @@ public class ServerToolsTests(AspireContext aspireContext)
     [InlineData("2025")]
     public async Task GetServerStorage_PerServer_ShouldSucceed(string serverName)
     {
-        await _aspireContext.Context.StartAsync(TestContext.Current.CancellationToken);
-        var apiR = await _aspireContext.Context.ResourceNotifications.WaitForResourceHealthyAsync("http-api", TestContext.Current.CancellationToken);
-        await _aspireContext.Context.ResourceNotifications.WaitForDependenciesAsync(apiR.Resource, TestContext.Current.CancellationToken);
+        await _aspireContext.StartApiAsync(TestContext.Current.CancellationToken);
         await using var mcpClient = await _aspireContext.GetMcpClientAsync();
 
         CallToolRequestParams requestParams = new CallToolRequestParams
