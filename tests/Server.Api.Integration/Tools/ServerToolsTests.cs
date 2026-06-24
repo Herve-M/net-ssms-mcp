@@ -16,8 +16,7 @@ public class ServerToolsTests(AspireContext aspireContext)
     public async Task ListToolsAsync_ShouldSucceed()
     {
         // Arrange
-        await _aspireContext.StartApiAsync(TestContext.Current.CancellationToken);
-        await using var mcpClient = await _aspireContext.GetMcpClientAsync();
+        await using var mcpClient = await _aspireContext.GetMcpClientWhenReadyAsync(TestContext.Current.CancellationToken);
 
         // Act
         IList<McpClientTool> toolList = await mcpClient.ListToolsAsync(cancellationToken: TestContext.Current.CancellationToken);
@@ -47,8 +46,7 @@ public class ServerToolsTests(AspireContext aspireContext)
     public async Task GetServersList_ShouldSucceed()
     {
         // Arrange
-        await _aspireContext.StartApiAsync(TestContext.Current.CancellationToken);
-        await using var mcpClient = await _aspireContext.GetMcpClientAsync();
+        await using var mcpClient = await _aspireContext.GetMcpClientWhenReadyAsync(TestContext.Current.CancellationToken);
 
 
         // Act
@@ -62,13 +60,12 @@ public class ServerToolsTests(AspireContext aspireContext)
     }
 
     [Theory]
-    [InlineData("2022")]
-    [InlineData("2025")]
+    [InlineData(AspireContext.Sql2022ServerName)]
+    [InlineData(AspireContext.Sql2025ServerName)]
     public async Task GetServerVersion_PerServer_ShouldSucceed(string serverName)
     {
         // Arrange
-        await _aspireContext.StartApiAsync(TestContext.Current.CancellationToken);
-        await using var mcpClient = await _aspireContext.GetMcpClientAsync();
+        await using var mcpClient = await _aspireContext.GetMcpClientWhenReadyAsync(TestContext.Current.CancellationToken);
 
         CallToolRequestParams requestParams = new CallToolRequestParams
         {
@@ -94,12 +91,11 @@ public class ServerToolsTests(AspireContext aspireContext)
     }
 
     [Theory]
-    [InlineData("2022")]
-    [InlineData("2025")]
+    [InlineData(AspireContext.Sql2022ServerName)]
+    [InlineData(AspireContext.Sql2025ServerName)]
     public async Task GetServerOverview_PerServer_ShouldSucceed(string serverName)
     {
-        await _aspireContext.StartApiAsync(TestContext.Current.CancellationToken);
-        await using var mcpClient = await _aspireContext.GetMcpClientAsync();
+        await using var mcpClient = await _aspireContext.GetMcpClientWhenReadyAsync(TestContext.Current.CancellationToken);
 
         CallToolRequestParams requestParams = new CallToolRequestParams
         {
@@ -119,12 +115,11 @@ public class ServerToolsTests(AspireContext aspireContext)
     }
 
     [Theory]
-    [InlineData("2022")]
-    [InlineData("2025")]
+    [InlineData(AspireContext.Sql2022ServerName)]
+    [InlineData(AspireContext.Sql2025ServerName)]
     public async Task GetServerAvailability_PerServer_ShouldSucceed(string serverName)
     {
-        await _aspireContext.StartApiAsync(TestContext.Current.CancellationToken);
-        await using var mcpClient = await _aspireContext.GetMcpClientAsync();
+        await using var mcpClient = await _aspireContext.GetMcpClientWhenReadyAsync(TestContext.Current.CancellationToken);
 
         CallToolRequestParams requestParams = new CallToolRequestParams
         {
@@ -144,12 +139,11 @@ public class ServerToolsTests(AspireContext aspireContext)
     }
 
     [Theory]
-    [InlineData("2022")]
-    [InlineData("2025")]
+    [InlineData(AspireContext.Sql2022ServerName)]
+    [InlineData(AspireContext.Sql2025ServerName)]
     public async Task GetServerCapacity_PerServer_ShouldSucceed(string serverName)
     {
-        await _aspireContext.StartApiAsync(TestContext.Current.CancellationToken);
-        await using var mcpClient = await _aspireContext.GetMcpClientAsync();
+        await using var mcpClient = await _aspireContext.GetMcpClientWhenReadyAsync(TestContext.Current.CancellationToken);
 
         CallToolRequestParams requestParams = new CallToolRequestParams
         {
@@ -169,12 +163,11 @@ public class ServerToolsTests(AspireContext aspireContext)
     }
 
     [Theory]
-    [InlineData("2022")]
-    [InlineData("2025")]
+    [InlineData(AspireContext.Sql2022ServerName)]
+    [InlineData(AspireContext.Sql2025ServerName)]
     public async Task GetServerConnectivity_PerServer_ShouldSucceed(string serverName)
     {
-        await _aspireContext.StartApiAsync(TestContext.Current.CancellationToken);
-        await using var mcpClient = await _aspireContext.GetMcpClientAsync();
+        await using var mcpClient = await _aspireContext.GetMcpClientWhenReadyAsync(TestContext.Current.CancellationToken);
 
         CallToolRequestParams requestParams = new CallToolRequestParams
         {
@@ -194,12 +187,11 @@ public class ServerToolsTests(AspireContext aspireContext)
     }
 
     [Theory]
-    [InlineData("2022")]
-    [InlineData("2025")]
+    [InlineData(AspireContext.Sql2022ServerName)]
+    [InlineData(AspireContext.Sql2025ServerName)]
     public async Task GetServerDatabases_PerServer_ShouldSucceed(string serverName)
     {
-        await _aspireContext.StartApiAsync(TestContext.Current.CancellationToken);
-        await using var mcpClient = await _aspireContext.GetMcpClientAsync();
+        await using var mcpClient = await _aspireContext.GetMcpClientWhenReadyAsync(TestContext.Current.CancellationToken);
 
         CallToolRequestParams requestParams = new CallToolRequestParams
         {
@@ -219,12 +211,11 @@ public class ServerToolsTests(AspireContext aspireContext)
     }
 
     [Theory]
-    [InlineData("2022")]
-    [InlineData("2025")]
+    [InlineData(AspireContext.Sql2022ServerName)]
+    [InlineData(AspireContext.Sql2025ServerName)]
     public async Task GetServerEngine_PerServer_ShouldSucceed(string serverName)
     {
-        await _aspireContext.StartApiAsync(TestContext.Current.CancellationToken);
-        await using var mcpClient = await _aspireContext.GetMcpClientAsync();
+        await using var mcpClient = await _aspireContext.GetMcpClientWhenReadyAsync(TestContext.Current.CancellationToken);
 
         CallToolRequestParams requestParams = new CallToolRequestParams
         {
@@ -244,12 +235,11 @@ public class ServerToolsTests(AspireContext aspireContext)
     }
 
     [Theory]
-    [InlineData("2022")]
-    [InlineData("2025")]
+    [InlineData(AspireContext.Sql2022ServerName)]
+    [InlineData(AspireContext.Sql2025ServerName)]
     public async Task GetServerFeatures_PerServer_ShouldSucceed(string serverName)
     {
-        await _aspireContext.StartApiAsync(TestContext.Current.CancellationToken);
-        await using var mcpClient = await _aspireContext.GetMcpClientAsync();
+        await using var mcpClient = await _aspireContext.GetMcpClientWhenReadyAsync(TestContext.Current.CancellationToken);
 
         CallToolRequestParams requestParams = new CallToolRequestParams
         {
@@ -269,12 +259,11 @@ public class ServerToolsTests(AspireContext aspireContext)
     }
 
     [Theory]
-    [InlineData("2022")]
-    [InlineData("2025")]
+    [InlineData(AspireContext.Sql2022ServerName)]
+    [InlineData(AspireContext.Sql2025ServerName)]
     public async Task GetServerIdentity_PerServer_ShouldSucceed(string serverName)
     {
-        await _aspireContext.StartApiAsync(TestContext.Current.CancellationToken);
-        await using var mcpClient = await _aspireContext.GetMcpClientAsync();
+        await using var mcpClient = await _aspireContext.GetMcpClientWhenReadyAsync(TestContext.Current.CancellationToken);
 
         CallToolRequestParams requestParams = new CallToolRequestParams
         {
@@ -294,12 +283,11 @@ public class ServerToolsTests(AspireContext aspireContext)
     }
 
     [Theory]
-    [InlineData("2022")]
-    [InlineData("2025")]
+    [InlineData(AspireContext.Sql2022ServerName)]
+    [InlineData(AspireContext.Sql2025ServerName)]
     public async Task GetServerLocalization_PerServer_ShouldSucceed(string serverName)
     {
-        await _aspireContext.StartApiAsync(TestContext.Current.CancellationToken);
-        await using var mcpClient = await _aspireContext.GetMcpClientAsync();
+        await using var mcpClient = await _aspireContext.GetMcpClientWhenReadyAsync(TestContext.Current.CancellationToken);
 
         CallToolRequestParams requestParams = new CallToolRequestParams
         {
@@ -319,12 +307,11 @@ public class ServerToolsTests(AspireContext aspireContext)
     }
 
     [Theory]
-    [InlineData("2022")]
-    [InlineData("2025")]
+    [InlineData(AspireContext.Sql2022ServerName)]
+    [InlineData(AspireContext.Sql2025ServerName)]
     public async Task GetServerPlatform_PerServer_ShouldSucceed(string serverName)
     {
-        await _aspireContext.StartApiAsync(TestContext.Current.CancellationToken);
-        await using var mcpClient = await _aspireContext.GetMcpClientAsync();
+        await using var mcpClient = await _aspireContext.GetMcpClientWhenReadyAsync(TestContext.Current.CancellationToken);
 
         CallToolRequestParams requestParams = new CallToolRequestParams
         {
@@ -344,12 +331,11 @@ public class ServerToolsTests(AspireContext aspireContext)
     }
 
     [Theory]
-    [InlineData("2022")]
-    [InlineData("2025")]
+    [InlineData(AspireContext.Sql2022ServerName)]
+    [InlineData(AspireContext.Sql2025ServerName)]
     public async Task GetServerSecurity_PerServer_ShouldSucceed(string serverName)
     {
-        await _aspireContext.StartApiAsync(TestContext.Current.CancellationToken);
-        await using var mcpClient = await _aspireContext.GetMcpClientAsync();
+        await using var mcpClient = await _aspireContext.GetMcpClientWhenReadyAsync(TestContext.Current.CancellationToken);
 
         CallToolRequestParams requestParams = new CallToolRequestParams
         {
@@ -369,12 +355,11 @@ public class ServerToolsTests(AspireContext aspireContext)
     }
 
     [Theory]
-    [InlineData("2022")]
-    [InlineData("2025")]
+    [InlineData(AspireContext.Sql2022ServerName)]
+    [InlineData(AspireContext.Sql2025ServerName)]
     public async Task GetServerStorage_PerServer_ShouldSucceed(string serverName)
     {
-        await _aspireContext.StartApiAsync(TestContext.Current.CancellationToken);
-        await using var mcpClient = await _aspireContext.GetMcpClientAsync();
+        await using var mcpClient = await _aspireContext.GetMcpClientWhenReadyAsync(TestContext.Current.CancellationToken);
 
         CallToolRequestParams requestParams = new CallToolRequestParams
         {

@@ -24,7 +24,7 @@ IResourceBuilder<SqlServerServerResource> sqlServer2025 = builder
         .WithEnvironment("MSSQL_DB_BAK", "/usr/config/restore-2025.sql")
     ;
 
-builder.AddProject<Projects.Server_Api>("http-api")
+IResourceBuilder<ProjectResource> mcpServer = builder.AddProject<Projects.Server_Api>("http-api")
     .WithReference(sqlServer2022)
         .WaitFor(sqlServer2022)
     .WithReference(sqlServer2025)
@@ -32,18 +32,16 @@ builder.AddProject<Projects.Server_Api>("http-api")
     .WithExplicitStart()
     ;
 
-builder.AddProject<Projects.Server_Mcp>("mcp-api")
-    .WithReference(sqlServer2022)
-        .WaitFor(sqlServer2022)
-    .WithReference(sqlServer2025)
-        .WaitFor(sqlServer2025)
+builder.AddContainer("inspector", "ghcr.io/modelcontextprotocol/inspector", "latest")
+    .WithHttpEndpoint(port: 6274, targetPort: 6274, name: "client")
+    .WithHttpEndpoint(port: 6277, targetPort: 6277, name: "proxy")
+    .WithEnvironment("HOST", "0.0.0.0")
+    .WithEnvironment("DANGEROUSLY_OMIT_AUTH", "true")
+    .WithEnvironment("MCP_AUTO_OPEN_ENABLED", "false")
+    .WithEnvironment("ALLOWED_ORIGINS", "http://0.0.0.0:6274")
+    .WithReference(mcpServer)
+        .WaitFor(mcpServer)
     .WithExplicitStart()
     ;
-
-// // require http
-// builder.AddMcpInspector("inspector")
-//     .WithMcpServer(mcpServer)
-//     .WaitFor(mcpServer)
-//     ;
 
 builder.Build().Run();

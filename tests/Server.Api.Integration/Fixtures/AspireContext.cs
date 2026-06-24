@@ -8,10 +8,18 @@ namespace ssms.Server.Api.Integration.Tests.Fixtures;
 public class AspireContext
     : IAsyncLifetime
 {
+    // SQL Server data-source names (the `serverName` tool argument), as defined in
+    // src/Server.Api/configs/main.json — distinct from the Aspire resource ids (sql-2022/sql-2025).
+    public const string Sql2022ServerName = "2022";
+    public const string Sql2025ServerName = "2025";
+
     public static readonly TimeSpan DefaultTimeout = TimeSpan.FromSeconds(30);
 
     private readonly SemaphoreSlim _startGate = new(1, 1);
     private bool _started;
+
+    private readonly SemaphoreSlim _apiGate = new(1, 1);
+    private bool _apiReady;
 
     public DistributedApplication Context { get; private set; } = default!;
 
@@ -48,6 +56,7 @@ public class AspireContext
     {
         await Context.DisposeAsync();
         _startGate.Dispose();
+        _apiGate.Dispose();
     }
 
     /// <summary>
@@ -76,25 +85,51 @@ public class AspireContext
     }
 
     /// <summary>
-    /// Ensures the host is started and explicitly starts the (explicit-start) "http-api" resource,
-    /// waiting for it and its dependencies to become healthy.
+    /// Ensures the host is started and the (explicit-start) "http-api" resource is started and
+    /// healthy (with its dependencies). Idempotent and safe under concurrent callers — the start
+    /// command fires exactly once.
     /// </summary>
-    public async Task<ResourceEvent> StartApiAsync(CancellationToken cancellationToken)
+    private async Task EnsureApiReadyAsync(CancellationToken cancellationToken)
     {
-        await EnsureStartedAsync(cancellationToken);
+        if (_apiReady)
+        {
+            return;
+        }
 
-        await Context.ResourceCommands.ExecuteCommandAsync("http-api", KnownResourceCommands.StartCommand, cancellationToken);
+        await _apiGate.WaitAsync(cancellationToken);
+        try
+        {
+            if (!_apiReady)
+            {
+                await EnsureStartedAsync(cancellationToken);
 
-        ResourceEvent apiResource = await Context.ResourceNotifications
-            .WaitForResourceHealthyAsync("http-api", cancellationToken);
-        await Context.ResourceNotifications
-            .WaitForDependenciesAsync(apiResource.Resource, cancellationToken);
+                await Context.ResourceCommands.ExecuteCommandAsync("http-api", KnownResourceCommands.StartCommand, cancellationToken);
 
-        return apiResource;
+                ResourceEvent apiResource = await Context.ResourceNotifications
+                    .WaitForResourceHealthyAsync("http-api", cancellationToken);
+                await Context.ResourceNotifications
+                    .WaitForDependenciesAsync(apiResource.Resource, cancellationToken);
+
+                _apiReady = true;
+            }
+        }
+        finally
+        {
+            _apiGate.Release();
+        }
     }
 
-    public Task<McpClient> GetMcpClientAsync()
+    public async Task<HttpClient> GetHttpClientWhenReadyAsync(CancellationToken cancellationToken)
     {
+        await EnsureApiReadyAsync(cancellationToken);
+
+        return Context.CreateHttpClient("http-api");
+    }
+
+    public async Task<McpClient> GetMcpClientWhenReadyAsync(CancellationToken cancellationToken)
+    {
+        await EnsureApiReadyAsync(cancellationToken);
+
         var mcpHttpClient = Context.CreateHttpClient("http-api");
         var httpClientTransport = new HttpClientTransport(new HttpClientTransportOptions
         {
@@ -102,6 +137,6 @@ public class AspireContext
             TransportMode = HttpTransportMode.AutoDetect,
         }, mcpHttpClient);
 
-        return McpClient.CreateAsync(httpClientTransport, cancellationToken: TestContext.Current.CancellationToken);
+        return await McpClient.CreateAsync(httpClientTransport, cancellationToken: cancellationToken);
     }
 }
