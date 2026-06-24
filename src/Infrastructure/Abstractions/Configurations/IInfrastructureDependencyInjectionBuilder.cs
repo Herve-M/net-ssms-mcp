@@ -10,7 +10,7 @@ public interface IInfrastructureDependencyInjectionBuilder
 
     IInfrastructureDependencyInjectionBuilder WithFeatureToggle();
     IInfrastructureDependencyInjectionBuilder WithFileConfiguration(IConfigurationBuilder configurationBuilder, in string folderPath);
-    IInfrastructureDependencyInjectionBuilder WithRuntimeConfiguration(IConfigurationBuilder configurationBuilder, MainConfiguration configuration);
+    IInfrastructureDependencyInjectionBuilder WithRuntimeConfiguration(IConfigurationBuilder configurationBuilder, in MainConfiguration configuration);
     IInfrastructureDependencyInjectionBuilder WithSSMS();
     IInfrastructureDependencyInjectionBuilder WithHealthChecks();
     IInfrastructureDependencyInjectionBuilder WithOpenTelemetry(Action<OpenTelemetrySettings>? configure = null);

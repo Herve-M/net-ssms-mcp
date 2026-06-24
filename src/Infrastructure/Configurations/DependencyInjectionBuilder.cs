@@ -116,7 +116,7 @@ public sealed class DependencyInjectionBuilder(
 
     public override IInfrastructureDependencyInjectionBuilder WithRuntimeConfiguration(
         IConfigurationBuilder configurationBuilder,
-        MainConfiguration configuration)
+        in MainConfiguration configuration)
     {
         Dictionary<string, string?> values = new();
 
