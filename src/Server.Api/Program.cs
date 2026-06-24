@@ -57,7 +57,7 @@ builder.Services
         .WithServiceDiscovery()
         .WithHealthChecks()
         .WithFeatureToggle()
-            .WithRuntimeConfiguration(builder.Configuration, "configs/main.json")
+            .WithFileConfiguration(builder.Configuration, "configs/main.json")
         .WithSSMS()
             .Build()
     .UseApplicationLayer(builder.Configuration)
