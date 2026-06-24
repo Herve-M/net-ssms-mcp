@@ -6,25 +6,25 @@
     <Nullable>enable</Nullable>
     <RootNamespace>ssmsmcp.$(MSBuildProjectName)</RootNamespace>
     <AssemblyName>ssmsmcp.$(MSBuildProjectName)</AssemblyName>
+    <!-- Server.Mcp is a self-contained executable; allow this non-self-contained
+         test exe to reference it for unit testing (NETSDK1151). -->
+    <ValidateExecutableReferencesMatchSelfContained>false</ValidateExecutableReferencesMatchSelfContained>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Aspire.Hosting.Testing" />
     <PackageReference Include="AwesomeAssertions" />
-    <PackageReference Include="Microsoft.Testing.Platform.MSBuild" />
     <PackageReference Include="ModelContextProtocol" />
     <PackageReference Include="xunit.v3.mtp-v2" />
+    <PackageReference Include="Microsoft.Testing.Platform.MSBuild" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="../../src/Server.Mcp/Server.Mcp.csproj" />
     <ProjectReference Include="../../src/Server.Aspire.Host/Server.Aspire.Host.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Using Include="System.Net" />
-    <Using Include="Microsoft.Extensions.DependencyInjection" />
-    <Using Include="Aspire.Hosting.ApplicationModel" />
-    <Using Include="Aspire.Hosting.Testing" />
     <Using Include="Xunit" />
   </ItemGroup>
 

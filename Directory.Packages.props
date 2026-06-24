@@ -9,7 +9,7 @@
     <PackageVersion Include="Aspire.Hosting.SqlServer" Version="13.4.4" />
     <PackageVersion Include="Aspire.Hosting.Testing" Version="13.4.4" />
     <PackageVersion Include="AwesomeAssertions" Version="9.4.0" />
-    <PackageVersion Include="CommunityToolkit.Aspire.Hosting.McpInspector" Version="13.4.0" />
+    <PackageVersion Include="DotMake.CommandLine" Version="3.5.0" />
     <PackageVersion Include="DotNetDiag.HealthChecks.SqlServer" Version="10.0.8" />
     <PackageVersion Include="DotNetDiag.HealthChecks.UI.Client" Version="10.0.7" />
     <PackageVersion Include="FluentValidation" Version="12.1.1" />
@@ -32,6 +32,7 @@
     <PackageVersion Include="Microsoft.FeatureManagement" Version="4.5.0" />
     <PackageVersion Include="Microsoft.FeatureManagement.AspNetCore" Version="4.5.0" />
     <PackageVersion Include="Microsoft.SqlServer.SqlManagementObjects" Version="181.25.0" />
+    <PackageVersion Include="Microsoft.Testing.Platform.MSBuild" Version="2.2.3" />
     <PackageVersion Include="MinVer" Version="7.0.0">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>

@@ -3,11 +3,9 @@
   <PropertyGroup>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <OutputType>Exe</OutputType>
     <RootNamespace>ssmsmcp.$(MSBuildProjectName)</RootNamespace>
     <AssemblyName>ssmsmcp.$(MSBuildProjectName)</AssemblyName>
     <TargetFramework>net10.0</TargetFramework>
-    <TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Testing.Platform.MSBuild" />
     <PackageReference Include="xunit.v3.mtp-v2" />
   </ItemGroup>
 

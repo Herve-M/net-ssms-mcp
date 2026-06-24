@@ -17,6 +17,5 @@
 
     <ItemGroup>
       <PackageReference Include="Aspire.Hosting.SqlServer" />
-      <PackageReference Include="CommunityToolkit.Aspire.Hosting.McpInspector" />
     </ItemGroup>
 </Project>

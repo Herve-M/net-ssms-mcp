@@ -103,12 +103,41 @@ public sealed class DependencyInjectionBuilder(
 
         return this;
     }
-    public override IInfrastructureDependencyInjectionBuilder WithRuntimeConfiguration(
+    public override IInfrastructureDependencyInjectionBuilder WithFileConfiguration(
         IConfigurationBuilder configurationBuilder,
         in string folderPath)
     {
         configurationBuilder.AddJsonFile(folderPath, false, true);
 
+        RegisterMainConfigurationOptions();
+
+        return this;
+    }
+
+    public override IInfrastructureDependencyInjectionBuilder WithRuntimeConfiguration(
+        IConfigurationBuilder configurationBuilder,
+        in MainConfiguration configuration)
+    {
+        Dictionary<string, string?> values = new();
+
+        for (int i = 0; i < configuration.DataSources.Length; i++)
+        {
+            DataSource source = configuration.DataSources[i];
+            string prefix = $"{MainConfiguration.ConfigurationSectionName}:data-source:{i}";
+
+            values[$"{prefix}:name"] = source.Name;
+            values[$"{prefix}:connectionString"] = source.ConnectionString;
+        }
+
+        configurationBuilder.AddInMemoryCollection(values);
+
+        RegisterMainConfigurationOptions();
+
+        return this;
+    }
+
+    private void RegisterMainConfigurationOptions()
+    {
         Services
             .AddOptions<MainConfiguration>()
             .Bind(Configuration.GetSection(MainConfiguration.ConfigurationSectionName))
@@ -122,8 +151,6 @@ public sealed class DependencyInjectionBuilder(
                 //TODO: cleaner
                 typeof(DependencyInjections).Assembly, typeof(Domain.DependencyInjection).Assembly
             });
-
-        return this;
     }
 
     public override IInfrastructureDependencyInjectionBuilder WithSSMS()
