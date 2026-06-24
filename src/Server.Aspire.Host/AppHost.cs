@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Hosting;
+
 IDistributedApplicationBuilder builder = DistributedApplication.CreateBuilder(args);
 
 IResourceBuilder<ParameterResource> sqlPassword = builder.AddParameter("sql-sa-password", secret: true);
@@ -32,16 +34,21 @@ IResourceBuilder<ProjectResource> mcpServer = builder.AddProject<Projects.Server
     .WithExplicitStart()
     ;
 
-builder.AddContainer("inspector", "ghcr.io/modelcontextprotocol/inspector", "latest")
+var inspector = builder.AddContainer("inspector", "ghcr.io/modelcontextprotocol/inspector", "0.22.0")
     .WithHttpEndpoint(port: 6274, targetPort: 6274, name: "client")
     .WithHttpEndpoint(port: 6277, targetPort: 6277, name: "proxy")
     .WithEnvironment("HOST", "0.0.0.0")
-    .WithEnvironment("DANGEROUSLY_OMIT_AUTH", "true")
     .WithEnvironment("MCP_AUTO_OPEN_ENABLED", "false")
     .WithEnvironment("ALLOWED_ORIGINS", "http://0.0.0.0:6274")
     .WithReference(mcpServer)
         .WaitFor(mcpServer)
     .WithExplicitStart()
     ;
+
+// Disabling inspector auth is a local-dev convenience only; never omit it outside Development.
+if (builder.Environment.IsDevelopment())
+{
+    inspector.WithEnvironment("DANGEROUSLY_OMIT_AUTH", "true");
+}
 
 builder.Build().Run();

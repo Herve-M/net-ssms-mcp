@@ -49,6 +49,12 @@ public static class MainConfigurationFactory
 
         DataSource first = loaded.DataSources[0];
 
+        if (string.IsNullOrWhiteSpace(first.ConnectionString))
+        {
+            throw new InvalidOperationException(
+                $"Configuration file '{path}' first data-source has a missing or empty connection string.");
+        }
+
         return new MainConfiguration
         {
             DataSources =

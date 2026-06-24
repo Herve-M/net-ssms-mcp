@@ -86,4 +86,33 @@ public sealed class MainConfigurationFactoryTests
             File.Delete(path);
         }
     }
+
+    [Fact]
+    public void FromConfigFile_WithEmptyFirstConnectionString_Throws()
+    {
+        // Arrange
+        string path = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid():N}.json");
+        File.WriteAllText(path, """
+        {
+          "main": {
+            "data-source": [
+              { "name": "2022", "connectionString": "" }
+            ]
+          }
+        }
+        """);
+
+        try
+        {
+            // Act
+            Action act = () => MainConfigurationFactory.FromConfigFile(path);
+
+            // Assert
+            act.Should().Throw<InvalidOperationException>();
+        }
+        finally
+        {
+            File.Delete(path);
+        }
+    }
 }
