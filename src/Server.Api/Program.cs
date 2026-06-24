@@ -89,8 +89,6 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference("/docs");
 }
 
-app.UseHttpsRedirection();
-
 app.MapMcp("/mcp");
 
 app.MapControllers();
