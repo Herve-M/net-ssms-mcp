@@ -1,3 +1,4 @@
+using System.Reflection;
 using Mediator;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -54,7 +55,7 @@ internal static class McpCliHost
                 cfg.ServerInfo = new()
                 {
                     Name = "SSMS MCP Server",
-                    Version = "0.1.0-beta",
+                    Version = GetServerVersion(),
                     Description = "MCP server for SQL Server Management Studio integration, providing server metadata and configuration information."
                 };
             })
@@ -62,5 +63,19 @@ internal static class McpCliHost
             .AddTools();
 
         await builder.Build().RunAsync();
+    }
+
+    private static string GetServerVersion()
+    {
+        string? informational = typeof(McpCliHost).Assembly
+            .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?
+            .InformationalVersion;
+
+        if (string.IsNullOrWhiteSpace(informational))
+        {
+            return "0.1.0-beta"; // fallback for debug
+        }
+
+        return informational;
     }
 }
