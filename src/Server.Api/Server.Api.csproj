@@ -6,14 +6,14 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>ssmsmcp.$(MSBuildProjectName)</RootNamespace>
     <AssemblyName>ssmsmcp.$(MSBuildProjectName)</AssemblyName>
-    <InvariantGlobalization>true</InvariantGlobalization>
+    <InvariantGlobalization>false</InvariantGlobalization>
     <StaticWebAssetsEnabled>false</StaticWebAssetsEnabled>
     <MinVerTagPrefix>api-</MinVerTagPrefix>
   </PropertyGroup>
 
   <PropertyGroup>
     <LocalRegistry>Docker</LocalRegistry>
-    <ContainerBaseImage>mcr.microsoft.com/dotnet/aspnet:10.0-noble-chiseled</ContainerBaseImage>
+    <ContainerBaseImage>mcr.microsoft.com/dotnet/aspnet:10.0-noble-chiseled-extra</ContainerBaseImage>
     <ContainerRepository>Herve-M/net-ssms-mcp</ContainerRepository>
     <ContainerTitle>SSMS MCP (HTTP) API</ContainerTitle>
     <ContainerImageFormat>OCI</ContainerImageFormat>

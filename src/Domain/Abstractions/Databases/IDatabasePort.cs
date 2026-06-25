@@ -10,4 +10,8 @@ public interface IDatabasePort
     Task<Database> GetDatabase(string serverName, string name, CancellationToken cancellationToken);
 
     Task<IReadOnlyCollection<Database>> GetDatabases(string serverName, CancellationToken cancellationToken);
+
+    Task<IReadOnlyCollection<Schema>> GetDatabaseSchemas(string serverName, string databaseName, int skip, int take, CancellationToken cancellationToken);
+
+    Task<int> GetDatabaseSchemasCount(string serverName, string databaseName, CancellationToken cancellationToken);
 }
