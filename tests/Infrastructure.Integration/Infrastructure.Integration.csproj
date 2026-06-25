@@ -6,6 +6,11 @@
     <RootNamespace>ssmsmcp.$(MSBuildProjectName)</RootNamespace>
     <AssemblyName>ssmsmcp.$(MSBuildProjectName)</AssemblyName>
     <TargetFramework>net10.0</TargetFramework>
+<<<<<<< HEAD
+=======
+    <TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
+    <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
+>>>>>>> 8659f5f (WiP)
   </PropertyGroup>
 
   <ItemGroup>
