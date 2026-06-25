@@ -24,6 +24,8 @@ jobs:
     permissions:
       packages: write
       contents: read
+      actions: read
+      security-events: write
 
     steps:
       - uses: actions/checkout@v6.0.2
@@ -34,21 +36,53 @@ jobs:
           lfs: false
 
       - name: "Setup .NET"
-        uses: actions/setup-dotnet@v5.2.0
+        uses: actions/setup-dotnet@v5.3.0
         with:
           dotnet-version: 10.0.x
-
-      - name: "Restore dependencies"
-        run: dotnet restore
 
       - name: "Restore tools"
         run: dotnet tool restore
 
-      - name: "Build server-mcp"
-        run: dotnet build src/Server.Mcp/Server.Mcp.csproj -c Release --no-restore
+      - name: "Restore dependencies"
+        run: dotnet restore
 
-      - name: "Pack mcp"
-        run: dotnet pack src/Server.Mcp/Server.Mcp.csproj -c Release --no-build -o ${{ runner.temp }}
+      - name: "Resolve debug symbol props (embed on untagged builds)"
+        id: props
+        run: |
+          if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+            echo "extra=" >> "$GITHUB_OUTPUT"
+          else
+            echo "extra=-p:DebugType=embedded" >> "$GITHUB_OUTPUT"
+          fi
 
-      - name: "Publish NuGet package"
-        run: dotnet nuget push "${{ runner.temp }}/ssms-mcp.*.nupkg" --api-key "${{ secrets.GITHUB_TOKEN }}" --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" --skip-duplicate
+      - name: "Publish server-mcp (linux-x64, compile gate)"
+        run: dotnet publish src/Server.Mcp/Server.Mcp.csproj -c Release --no-restore -r linux-x64 ${{ steps.props.outputs.extra }}
+
+      - name: "Generate SBOM"
+        uses: anchore/sbom-action@v0.24.0
+        with:
+          path: src/Server.Mcp/bin/Release/net10.0/linux-x64/publish
+          format: spdx-json
+          output-file: ${{ runner.temp }}/sbom.spdx.json
+          artifact-name: sbom-server-mcp.spdx.json
+
+      - name: "Scan SBOM"
+        id: scan
+        uses: anchore/scan-action@v7.4.0
+        with:
+          sbom: ${{ runner.temp }}/sbom.spdx.json
+          severity-cutoff: high
+          fail-build: false
+
+      - name: "Upload SARIF"
+        if: ${{ !cancelled() && steps.scan.outputs.sarif != '' }}
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: ${{ steps.scan.outputs.sarif }}
+          category: server-mcp
+
+      - name: "Pack server-mcp"
+        run: dotnet pack src/Server.Mcp/Server.Mcp.csproj -c Release --no-restore -o ${{ runner.temp }} ${{ steps.props.outputs.extra }}
+
+      - name: "Push to GitHub Packages"
+        run: dotnet nuget push "${{ runner.temp }}/*.nupkg" --api-key "${{ secrets.GITHUB_TOKEN }}" --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" --skip-duplicate

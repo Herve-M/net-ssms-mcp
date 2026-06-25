@@ -1,6 +1,6 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-10-17/server.schema.json",
-  "description": "<your description here>",
+  "description": "SSMS MCP server for SQL Server. Launch with -s <connection-string> (default), or -c <config-file> to read the first data-source from a config file.",
   "name": "io.github.Herve-M/net-ssms-mcp",
   "version": "0.1.0-beta",
   "packages": [
@@ -11,8 +11,22 @@
       "transport": {
         "type": "stdio"
       },
-      "packageArguments": [],
+      "packageArguments": [
+        {
+          "type": "named",
+          "name": "-s",
+          "value": "{server_connection_string}",
+          "valueHint": "SQL Server connection string"
+        }
+      ],
       "environmentVariables": []
+    }
+  ],
+  "inputs": [
+    {
+      "id": "server_connection_string",
+      "description": "SQL Server connection string the MCP server connects to (exposed as the 'main' data-source).",
+      "isSecret": true
     }
   ],
   "repository": {
