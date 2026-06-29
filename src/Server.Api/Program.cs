@@ -47,6 +47,7 @@ builder.Services
     })
     .AddTools()
     ;
+builder.Services.AddDefaultServerName(null);
 
 builder.Services
     .UseInfrastructureLayer(builder.Configuration, builder.Environment)
