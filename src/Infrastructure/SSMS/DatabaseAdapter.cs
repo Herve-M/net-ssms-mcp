@@ -1,7 +1,9 @@
+using System.Data;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.SqlServer.Management.Smo;
 using ssmsmcp.Domain.Abstractions.Databases;
 using ssmsmcp.Infrastructure.Abstractions.SSMS;
+using Urn = Microsoft.SqlServer.Management.Sdk.Sfc.Urn;
 
 namespace ssmsmcp.Infrastructure.SSMS;
 
@@ -66,5 +68,62 @@ internal sealed class DatabaseAdapter(IServerConnectionFactory factory, IMemoryC
         }
 
         return database.Schemas.Count;
+    }
+
+    public async Task<IReadOnlyCollection<DatabaseObjectInfo>> GetDatabaseObjects(
+        string serverName, string databaseName, DatabaseObjectTypes types, bool forceRefresh, CancellationToken cancellationToken)
+    {
+        string cacheKey = $"objects:{serverName}:{databaseName}:{(long)types}";
+
+        if (forceRefresh)
+        {
+            cache.Remove(cacheKey);
+        }
+
+        return await cache.GetOrCreateAsync(
+            cacheKey,
+            async entry =>
+            {
+                entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(15);
+                return await EnumerateObjects(serverName, databaseName, types);
+            })
+            ?? Array.Empty<DatabaseObjectInfo>();
+    }
+
+    private async Task<IReadOnlyCollection<DatabaseObjectInfo>> EnumerateObjects(
+        string serverName, string databaseName, DatabaseObjectTypes types)
+    {
+        Server server = await factory.GetServer(serverName);
+        Database? database = server.Databases[databaseName];
+
+        if (database is null)
+        {
+            return Array.Empty<DatabaseObjectInfo>();
+        }
+
+        DataTable table = database.EnumObjects(types, SortOrder.Name);
+
+        List<DatabaseObjectInfo> objects = new(table.Rows.Count);
+        foreach (DataRow row in table.Rows)
+        {
+            string urnText = row["Urn"] as string ?? string.Empty;
+            string schema = row["Schema"] as string ?? string.Empty;
+            string name = row["Name"] as string ?? string.Empty;
+
+            if (!string.IsNullOrEmpty(urnText))
+            {
+                Urn urn = new(urnText);
+                schema = urn.GetAttribute("Schema") ?? schema;
+                name = urn.GetAttribute("Name") ?? name;
+            }
+
+            objects.Add(new DatabaseObjectInfo(
+                schema,
+                name,
+                row["DatabaseObjectTypes"] as string ?? string.Empty,
+                urnText));
+        }
+
+        return objects;
     }
 }
