@@ -13,7 +13,7 @@ public class ServerToolsTests(AspireContext aspireContext)
     [Theory]
     [InlineData(AspireContext.Sql2022Resource)]
     [InlineData(AspireContext.Sql2025Resource)]
-    public async Task ListToolsAsync_ShouldExposeExactlyTheTwoSpecTools(string sqlResource)
+    public async Task ListToolsAsync_ShouldExposeExactlyTheSpecTools(string sqlResource)
     {
         await using McpClient mcpClient = await _aspireContext
             .GetStdioMcpClientAsync(sqlResource, TestContext.Current.CancellationToken);
@@ -22,7 +22,7 @@ public class ServerToolsTests(AspireContext aspireContext)
             .ListToolsAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         tools.Select(t => t.Name)
-            .Should().BeEquivalentTo(new[] { "get_server_info", "list_databases" });
+            .Should().BeEquivalentTo(new[] { "get_server_info", "list_databases", "list_objects" });
     }
 
     [Theory]

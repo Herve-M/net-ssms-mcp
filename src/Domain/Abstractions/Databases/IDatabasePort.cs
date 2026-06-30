@@ -14,4 +14,6 @@ public interface IDatabasePort
     Task<IReadOnlyCollection<Schema>> GetDatabaseSchemas(string serverName, string databaseName, int skip, int take, CancellationToken cancellationToken);
 
     Task<int> GetDatabaseSchemasCount(string serverName, string databaseName, CancellationToken cancellationToken);
+
+    Task<IReadOnlyCollection<DatabaseObjectInfo>> GetDatabaseObjects(string serverName, string databaseName, DatabaseObjectTypes types, bool forceRefresh, CancellationToken cancellationToken);
 }

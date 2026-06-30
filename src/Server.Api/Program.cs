@@ -31,6 +31,19 @@ builder.Services
     })
     ;
 
+if (builder.Environment.IsDevelopment())
+{
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy("McpInspector", policy =>
+        {
+            policy.WithOrigins("http://localhost:6274")
+                .AllowAnyMethod()
+                .AllowAnyHeader();
+        });
+    });
+}
+
 builder.Services
     .AddMcpServer(cfg =>
     {
@@ -88,6 +101,8 @@ if (app.Environment.IsDevelopment())
         ;
 
     app.MapScalarApiReference("/docs");
+
+    app.UseCors("McpInspector");
 }
 
 app.MapMcp("/mcp");
