@@ -21,5 +21,6 @@
     <Project Path="tests/Infrastructure.Integration/Infrastructure.Integration.csproj" />
     <Project Path="tests/Server.Api.Integration/Server.Api.Integration.csproj" />
     <Project Path="tests/Server.Mcp.Integration/Server.Mcp.Integration.csproj" />
+    <Project Path="tests/Server.Mcp.Shared.Unit/Server.Mcp.Shared.Unit.csproj" />
   </Folder>
 </Solution>

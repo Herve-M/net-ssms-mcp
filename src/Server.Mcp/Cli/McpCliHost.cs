@@ -33,6 +33,8 @@ internal static class McpCliHost
             .UseApplicationLayer(builder.Configuration)
             ;
 
+        builder.Services.AddDefaultServerName(MainConfigurationFactory.MainDataSourceName);
+
         builder.Services
             .AddMediator(options =>
             {
