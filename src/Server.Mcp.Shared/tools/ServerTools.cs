@@ -24,7 +24,8 @@ internal sealed class ServerTools(IMediator mediator, IDefaultServerName default
     public async Task<CallToolResult> GetServerInfo(
         [Description("Target SQL Server data-source name. Omit to use the default ('main' on the stdio host).")]
         string? server_name = null,
-        [Description("Bypass any metadata cache for this call.")]
+        //TODO: not yet implemented — plumb a cache-bypass flag through the GetServer* requests.
+        [Description("Reserved / not yet implemented: intended to bypass any metadata cache for this call.")]
         bool force_refresh = false,
         CancellationToken cancellationToken = default)
     {
