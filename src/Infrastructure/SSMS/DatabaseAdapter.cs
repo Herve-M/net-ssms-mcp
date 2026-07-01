@@ -11,7 +11,7 @@ internal sealed class DatabaseAdapter(IServerConnectionFactory factory, IMemoryC
     : IDatabasePort
 {
 
-    internal async Task<Database> GetDatabaseInternal(string serverName, string name, CancellationToken cancellationToken)
+    public async Task<Database> GetDatabase(string serverName, string name, CancellationToken cancellationToken)
     {
         return await cache.GetOrCreateAsync(
             $"{serverName}:{name}",
@@ -20,18 +20,15 @@ internal sealed class DatabaseAdapter(IServerConnectionFactory factory, IMemoryC
                 entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(15);
                 Server server = await factory.GetServer(serverName);
                 Database database = server.Databases[name];
+
+                if (database is null)
+                {
+                    throw new InvalidOperationException($"Database '{name}' not found on server '{serverName}'.");
+                }
+
                 database.PrefetchObjects();
                 return database;
-            }
-        );
-    }
-
-    public async Task<Database> GetDatabase(string serverName, string name, CancellationToken cancellationToken)
-    {
-        Server server = await factory.GetServer(serverName);
-        Database database = server.Databases[name];
-        database.PrefetchObjects();
-        return database;
+            });
     }
 
     public async Task<IReadOnlyCollection<Database>> GetDatabases(string serverName, CancellationToken cancellationToken)

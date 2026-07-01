@@ -34,7 +34,8 @@ internal sealed class DatabaseTools(IMediator mediator, IDefaultServerName defau
         int page = 1,
         [Description("Number of items per page (max 100).")]
         int page_size = 20,
-        [Description("Bypass any metadata cache for this call.")]
+        //TODO: not yet implemented — plumb a cache-bypass flag through GetServerDatabases.
+        [Description("Reserved / not yet implemented: intended to bypass any metadata cache for this call.")]
         bool force_refresh = false,
         CancellationToken cancellationToken = default)
     {
@@ -43,7 +44,6 @@ internal sealed class DatabaseTools(IMediator mediator, IDefaultServerName defau
             return ToolPayload.MissingServerName();
         }
 
-        //TODO: add support for pagination
         IReadOnlyCollection<ServerDatabaseListItemDto> databases =
             await _mediator.Send(new GetServerDatabasesRequest(resolved), cancellationToken);
 
