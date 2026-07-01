@@ -46,7 +46,7 @@ jobs:
             image: "mcr.microsoft.com/dotnet/aspnet:10.0-azurelinux3.0-distroless-extra"
 
     steps:
-      - uses: actions/checkout@v6.0.2
+      - uses: actions/checkout@v7
 
       - run: git fetch --depth=1 origin ${{ github.base_ref }}
 
