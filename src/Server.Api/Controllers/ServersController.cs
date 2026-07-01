@@ -1,6 +1,7 @@
 using Asp.Versioning;
 using Mediator;
 using Microsoft.AspNetCore.Mvc;
+using ssmsmcp.Application.Abstractions.Shared;
 using ssmsmcp.Application.Servers;
 using ssmsmcp.Server.Api.Models.V1;
 
@@ -297,21 +298,25 @@ public sealed class ServersController(IMediator mediator)
     }
 
     [HttpGet("{serverName}/databases")]
-    [ProducesResponseType(typeof(IReadOnlyCollection<ServerDatabaseListItemResponse>), 200)]
+    [ProducesResponseType(typeof(PagedResult<ServerDatabaseListItemResponse>), 200)]
     [ProducesResponseType(typeof(ProblemDetails), 400)]
     [ProducesResponseType(typeof(ProblemDetails), 404)]
     [ProducesResponseType(typeof(ProblemDetails), 422)]
     [ProducesResponseType(typeof(ProblemDetails), 500)]
-    public async Task<IActionResult> GetServerDatabases(string serverName, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetServerDatabases(
+        string serverName,
+        [FromQuery] string? name_pattern = null,
+        [FromQuery] int page = 1,
+        [FromQuery] int page_size = 20,
+        CancellationToken cancellationToken = default)
     {
-        IReadOnlyCollection<ServerDatabaseListItemDto> result = await mediator.Send(new GetServerDatabasesRequest(serverName), cancellationToken);
-        ServerDatabaseListItemResponse[] response = result
-            .Select(database => new ServerDatabaseListItemResponse
-            {
-                Id = database.Id,
-                DatabaseName = database.DatabaseName
-            })
-            .ToArray();
+        PageRequest pagination = new() { Page = Math.Max(page, 1), PageSize = Math.Clamp(page_size, 1, 100) };
+        PagedResult<ServerDatabaseListItemDto> result = await mediator.Send(
+            new GetServerDatabasesRequest(serverName, name_pattern, false, pagination), cancellationToken);
+
+        PagedResult<ServerDatabaseListItemResponse> response = PagedResult<ServerDatabaseListItemResponse>.Create(
+            result.Items.Select(d => new ServerDatabaseListItemResponse { Id = d.Id, DatabaseName = d.DatabaseName }).ToArray(),
+            result.TotalCount, result.Page, result.PageSize);
 
         return Ok(response);
     }
