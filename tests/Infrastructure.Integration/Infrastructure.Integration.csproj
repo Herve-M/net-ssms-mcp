@@ -6,11 +6,6 @@
     <RootNamespace>ssmsmcp.$(MSBuildProjectName)</RootNamespace>
     <AssemblyName>ssmsmcp.$(MSBuildProjectName)</AssemblyName>
     <TargetFramework>net10.0</TargetFramework>
-<<<<<<< HEAD
-=======
-    <TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
-    <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
->>>>>>> 8659f5f (WiP)
   </PropertyGroup>
 
   <ItemGroup>
@@ -22,14 +17,11 @@
   </ItemGroup>
 
   <ItemGroup>
-<<<<<<< HEAD
-    <PackageReference Include="Microsoft.Testing.Platform.MSBuild" />
-=======
     <PackageReference Include="Testcontainers" />
     <PackageReference Include="AwesomeAssertions" />
     <PackageReference Include="Microsoft.Extensions.Options" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
->>>>>>> 424675f (test(infra): wire up Testcontainers packages and InternalsVisibleTo)
+    <PackageReference Include="Microsoft.Testing.Platform.MSBuild" />
     <PackageReference Include="xunit.v3.mtp-v2" />
   </ItemGroup>
 

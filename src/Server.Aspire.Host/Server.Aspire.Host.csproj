@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-<Project Sdk="Aspire.AppHost.Sdk/13.4.4">
-=======
 <Project Sdk="Aspire.AppHost.Sdk/13.4.6">
->>>>>>> 8659f5f (WiP)
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>

@@ -11,19 +11,6 @@
     <MinVerTagPrefix>api-</MinVerTagPrefix>
   </PropertyGroup>
 
-<<<<<<< HEAD
-=======
-  <PropertyGroup>
-    <LocalRegistry>Docker</LocalRegistry>
-    <ContainerBaseImage>mcr.microsoft.com/dotnet/aspnet:10.0-noble-chiseled-extra</ContainerBaseImage>
-    <ContainerRepository>Herve-M/net-ssms-mcp</ContainerRepository>
-    <ContainerTitle>SSMS MCP (HTTP) API</ContainerTitle>
-    <ContainerImageFormat>OCI</ContainerImageFormat>
-    <ContainerRuntimeIdentifiers>linux-x64;linux-arm64</ContainerRuntimeIdentifiers>
-    <!-- <ContainerImageTags>main;$(MinVerMajor);$(MinVerMajor).$(MinVerMinor);</ContainerImageTags> -->
-  </PropertyGroup>
-
->>>>>>> 8659f5f (WiP)
   <ItemGroup>
     <PackageReference Include="Asp.Versioning.OpenApi" />
     <PackageReference Include="DotNetDiag.HealthChecks.UI.Client" />
