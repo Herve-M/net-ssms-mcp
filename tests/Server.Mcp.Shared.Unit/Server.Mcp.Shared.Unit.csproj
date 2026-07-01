@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>ssmsmcp.$(MSBuildProjectName)</RootNamespace>
+    <AssemblyName>ssmsmcp.$(MSBuildProjectName)</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AwesomeAssertions" />
+    <PackageReference Include="xunit.v3.mtp-v2" />
+    <PackageReference Include="Microsoft.Testing.Platform.MSBuild" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../src/Server.Mcp.Shared/Server.Mcp.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+</Project>

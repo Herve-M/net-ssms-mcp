@@ -1,5 +1,6 @@
 using AwesomeAssertions;
 using ModelContextProtocol.Client;
+using ModelContextProtocol.Protocol;
 using ssmsmcp.Server.Mcp.Integration.Fixtures;
 
 namespace ssmsmcp.Server.Mcp.Integration.Tools;
@@ -12,18 +13,47 @@ public class ServerToolsTests(AspireContext aspireContext)
     [Theory]
     [InlineData(AspireContext.Sql2022Resource)]
     [InlineData(AspireContext.Sql2025Resource)]
-    public async Task ListToolsAsync_PerServer_ShouldExposeServerTools(string sqlResource)
+    public async Task ListToolsAsync_ShouldExposeExactlyTheSpecTools(string sqlResource)
     {
-        // Arrange: launch a Server.Mcp stdio process targeting the given SQL Server instance.
         await using McpClient mcpClient = await _aspireContext
             .GetStdioMcpClientAsync(sqlResource, TestContext.Current.CancellationToken);
 
-        // Act
         IList<McpClientTool> tools = await mcpClient
             .ListToolsAsync(cancellationToken: TestContext.Current.CancellationToken);
 
-        // Assert
-        tools.Should().NotBeNull();
-        tools.Select(t => t.Name).Should().Contain("get_servers_list");
+        tools.Select(t => t.Name)
+            .Should().BeEquivalentTo(new[] { "get_server_info", "list_databases", "list_objects" });
+    }
+
+    [Theory]
+    [InlineData(AspireContext.Sql2022Resource)]
+    [InlineData(AspireContext.Sql2025Resource)]
+    public async Task GetServerInfo_WithoutServerName_ShouldDefaultToMain(string sqlResource)
+    {
+        await using McpClient mcpClient = await _aspireContext
+            .GetStdioMcpClientAsync(sqlResource, TestContext.Current.CancellationToken);
+
+        CallToolResult result = await mcpClient
+            .CallToolAsync("get_server_info", cancellationToken: TestContext.Current.CancellationToken);
+
+        result.Should().NotBeNull();
+        result.IsError.Should().BeNull();
+        result.Content.Should().NotBeEmpty();
+    }
+
+    [Theory]
+    [InlineData(AspireContext.Sql2022Resource)]
+    [InlineData(AspireContext.Sql2025Resource)]
+    public async Task ListDatabases_WithoutServerName_ShouldDefaultToMain(string sqlResource)
+    {
+        await using McpClient mcpClient = await _aspireContext
+            .GetStdioMcpClientAsync(sqlResource, TestContext.Current.CancellationToken);
+
+        CallToolResult result = await mcpClient
+            .CallToolAsync("list_databases", cancellationToken: TestContext.Current.CancellationToken);
+
+        result.Should().NotBeNull();
+        result.IsError.Should().BeNull();
+        result.Content.Should().NotBeEmpty();
     }
 }

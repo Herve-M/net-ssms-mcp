@@ -13,6 +13,7 @@
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
     <PackageReference Include="Mediator.Abstractions" />
     <PackageReference Include="Microsoft.Data.SqlClient" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" />
     <PackageReference Include="Microsoft.Extensions.Configuration" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
@@ -31,6 +32,10 @@
 
   <ItemGroup>
     <ProjectReference Include="../Domain/Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="ssmsmcp.Infrastructure.Integration" />
   </ItemGroup>
 
 </Project>
