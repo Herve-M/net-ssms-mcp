@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="FluentValidation"/>
-    <PackageReference Include="Microsoft.Data.SqlClient" VersionOverride="7.0.2" />
+    <PackageReference Include="Microsoft.Data.SqlClient" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions"/>
     <PackageReference Include="Microsoft.Extensions.Options" />
