@@ -44,33 +44,14 @@ internal sealed class DatabaseTools(IMediator mediator, IDefaultServerName defau
             return ToolPayload.MissingServerName();
         }
 
-        IReadOnlyCollection<ServerDatabaseListItemDto> databases =
-            await _mediator.Send(new GetServerDatabasesRequest(resolved), cancellationToken);
-
-        IEnumerable<ServerDatabaseListItemDto> query = databases;
-
-        if (!string.IsNullOrWhiteSpace(name_pattern))
-        {
-            query = query.Where(d => d.DatabaseName.Contains(name_pattern, StringComparison.OrdinalIgnoreCase));
-        }
-
-        ServerDatabaseListItemDto[] ordered = query
-            .OrderBy(d => d.DatabaseName, StringComparer.OrdinalIgnoreCase)
-            .ToArray();
-
         PageRequest pagination = new()
         {
             Page = Math.Max(page, 1),
             PageSize = Math.Clamp(page_size, 1, 100),
         };
 
-        ServerDatabaseListItemDto[] pageItems = ordered
-            .Skip(pagination.Skip)
-            .Take(pagination.Take)
-            .ToArray();
-
-        PagedResult<ServerDatabaseListItemDto> result =
-            PagedResult<ServerDatabaseListItemDto>.Create(pageItems, ordered.Length, pagination.Page, pagination.PageSize);
+        PagedResult<ServerDatabaseListItemDto> result = await _mediator.Send(
+            new GetServerDatabasesRequest(resolved, name_pattern, include_system, pagination), cancellationToken);
 
         return ToolPayload.Structured(result);
     }
