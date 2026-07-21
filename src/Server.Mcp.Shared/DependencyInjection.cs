@@ -24,6 +24,9 @@ public static class DependencyInjection
         return mcpBuilder
             .WithTools<ServerTools>()
             .WithTools<DatabaseTools>()
+            .WithTools<TableTools>()
+            .WithTools<ViewTools>()
+            .WithTools<ProcedureTools>()
             ;
     }
 }

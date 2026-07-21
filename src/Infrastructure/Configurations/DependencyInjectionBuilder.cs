@@ -168,6 +168,7 @@ public sealed class DependencyInjectionBuilder(
             .AddSingleton<IViewPort, ViewAdapter>()
             .AddSingleton<IStoredProcedurePort, StoredProcedureAdapter>()
             .AddSingleton<IUserDefinedFunctionPort, UserDefinedFunctionAdapter>()
+            .AddSingleton<IUserDefinedAggregatePort, UserDefinedAggregateAdapter>()
             .AddSingleton<IUserDefinedTypePort, UserDefinedTypeAdapter>()
             .AddSingleton<IUserDefinedTableTypePort, UserDefinedTableTypeAdapter>()
             .AddSingleton<IUserPort, UserAdapter>()

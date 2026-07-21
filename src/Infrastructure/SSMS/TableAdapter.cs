@@ -26,4 +26,10 @@ internal sealed class TableAdapter(IDatabasePort databasePort) : ITablePort
         Database database = await databasePort.GetDatabase(serverName, databaseName, cancellationToken);
         return database.Tables.Count;
     }
+
+    public async Task<Table?> GetTable(string serverName, string databaseName, string schema, string name, CancellationToken cancellationToken)
+    {
+        Database database = await databasePort.GetDatabase(serverName, databaseName, cancellationToken);
+        return database.Tables[name, schema];
+    }
 }

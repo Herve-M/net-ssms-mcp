@@ -10,4 +10,6 @@ public interface IViewPort
     Task<IReadOnlyCollection<View>> GetDatabaseViews(string serverName, string databaseName, int skip, int take, CancellationToken cancellationToken);
 
     Task<int> GetDatabaseViewsCount(string serverName, string databaseName, CancellationToken cancellationToken);
+
+    Task<View?> GetView(string serverName, string databaseName, string schema, string name, CancellationToken cancellationToken);
 }

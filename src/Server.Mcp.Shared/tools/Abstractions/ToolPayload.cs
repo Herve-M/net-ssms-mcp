@@ -32,4 +32,13 @@ internal static class ToolPayload
             ],
         };
     }
+
+    public static CallToolResult NotFound(string message)
+    {
+        return new CallToolResult
+        {
+            IsError = true,
+            Content = [new TextContentBlock { Text = message }],
+        };
+    }
 }

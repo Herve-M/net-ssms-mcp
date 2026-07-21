@@ -21,4 +21,10 @@ internal sealed class UserDefinedFunctionAdapter(IDatabasePort databasePort) : I
         Database database = await databasePort.GetDatabase(serverName, databaseName, cancellationToken);
         return database.UserDefinedFunctions.Count;
     }
+
+    public async Task<UserDefinedFunction?> GetUserDefinedFunction(string serverName, string databaseName, string schema, string name, CancellationToken cancellationToken)
+    {
+        Database database = await databasePort.GetDatabase(serverName, databaseName, cancellationToken);
+        return database.UserDefinedFunctions[name, schema];
+    }
 }

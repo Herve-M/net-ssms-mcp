@@ -10,4 +10,6 @@ public interface ITablePort
     Task<IReadOnlyCollection<Table>> GetDatabaseTables(string serverName, string databaseName, int skip, int take, CancellationToken cancellationToken);
 
     Task<int> GetDatabaseTablesCount(string serverName, string databaseName, CancellationToken cancellationToken);
+
+    Task<Table?> GetTable(string serverName, string databaseName, string schema, string name, CancellationToken cancellationToken);
 }
