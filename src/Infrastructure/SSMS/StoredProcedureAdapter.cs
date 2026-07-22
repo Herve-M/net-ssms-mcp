@@ -38,7 +38,7 @@ internal sealed class StoredProcedureAdapter(IDatabasePort databasePort) : IStor
             $"FROM sys.dm_exec_describe_first_result_set_for_object({objectId}, 0) " +
             "ORDER BY column_ordinal";
 
-        DataSet dataSet = database.Parent.ConnectionContext.ExecuteWithResults(sql);
+        DataSet dataSet = database.ExecuteWithResults(sql);
 
         List<FirstResultSetColumnInfo> result = [];
         if (dataSet.Tables.Count > 0)

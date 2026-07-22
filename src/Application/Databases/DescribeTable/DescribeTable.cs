@@ -263,7 +263,7 @@ public sealed class DescribeTableHandler(ITablePort tablePort, IDatabasePort dat
             ToColumns = fkColumns.Select(c => c.ReferencedColumn).ToArray(),
             DeleteAction = MapForeignKeyAction(fk.DeleteAction),
             UpdateAction = MapForeignKeyAction(fk.UpdateAction),
-            IsDisabled = false,
+            IsDisabled = !fk.IsEnabled,
             IsNotTrusted = !fk.IsChecked,
         };
     }
