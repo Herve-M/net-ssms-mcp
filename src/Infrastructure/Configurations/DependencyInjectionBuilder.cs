@@ -10,6 +10,7 @@ using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 using ssmsmcp.Domain.Abstractions.Configurations;
 using ssmsmcp.Domain.Abstractions.Databases;
+using ssmsmcp.Domain.Abstractions.Security;
 using ssmsmcp.Domain.Abstractions.Servers;
 using ssmsmcp.Domain.Configurations;
 using ssmsmcp.Infrastructure.Abstractions.Configurations;
@@ -173,6 +174,9 @@ public sealed class DependencyInjectionBuilder(
             .AddSingleton<IUserPort, UserAdapter>()
             .AddSingleton<ITriggerPort, TriggerAdapter>()
             .AddSingleton<IRolePort, RoleAdapter>()
+            .AddSingleton<IPrincipalPort, PrincipalAdapter>()
+            .AddSingleton<IRoleMembershipPort, RoleMembershipAdapter>()
+            .AddSingleton<IPermissionPort, PermissionAdapter>()
             ;
 
         if (EnableHeathChecks)
