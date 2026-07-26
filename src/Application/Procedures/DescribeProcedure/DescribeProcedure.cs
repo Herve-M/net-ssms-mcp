@@ -1,9 +1,11 @@
 using Mediator;
 using Microsoft.SqlServer.Management.Smo;
+using ssmsmcp.Application.Abstractions;
+using ssmsmcp.Application.Databases;
 using ssmsmcp.Domain.Abstractions.Databases;
 using ExecutionContext = Microsoft.SqlServer.Management.Smo.ExecutionContext;
 
-namespace ssmsmcp.Application.Databases;
+namespace ssmsmcp.Application.Procedures;
 
 public sealed record DescribeProcedureDto
 {

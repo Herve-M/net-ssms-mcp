@@ -1,6 +1,7 @@
 using AwesomeAssertions;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging.Abstractions;
 using ssmsmcp.Domain.Abstractions.Databases;
 using ssmsmcp.Domain.Configurations;
 using ssmsmcp.Infrastructure.Abstractions.SSMS;
@@ -19,7 +20,7 @@ public sealed class StoredProcedureFirstResultSetTests(SqlServerFixture fixture)
     {
         factory = fixture.CreateFactory(
             new DataSource { Name = DataSourceName, ConnectionString = fixture.GetConnectionString(version) });
-        IDatabasePort databasePort = new DatabaseAdapter(factory, new MemoryCache(new MemoryCacheOptions()));
+        IDatabasePort databasePort = new DatabaseAdapter(factory, new MemoryCache(new MemoryCacheOptions()), NullLogger<DatabaseAdapter>.Instance);
         return new StoredProcedureAdapter(databasePort);
     }
 

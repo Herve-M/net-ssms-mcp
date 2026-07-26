@@ -1,4 +1,5 @@
 using Microsoft.SqlServer.Management.Smo;
+using ssmsmcp.Application.Tables;
 using Index = Microsoft.SqlServer.Management.Smo.Index;
 
 namespace ssmsmcp.Application.Databases;

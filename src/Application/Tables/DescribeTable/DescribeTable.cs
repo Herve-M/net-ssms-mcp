@@ -1,8 +1,12 @@
+using System.Data;
 using Mediator;
 using Microsoft.SqlServer.Management.Smo;
+using ssmsmcp.Application.Abstractions;
+using ssmsmcp.Application.Databases;
 using ssmsmcp.Domain.Abstractions.Databases;
+using Sfc = Microsoft.SqlServer.Management.Sdk.Sfc;
 
-namespace ssmsmcp.Application.Databases;
+namespace ssmsmcp.Application.Tables;
 
 public sealed record ColumnDto
 {
@@ -234,20 +238,48 @@ public sealed class DescribeTableHandler(ITablePort tablePort, IDatabasePort dat
         List<ForeignKeyRowDto> result = [];
         ObjectRefDto to = BuildObjectRef(databaseName, table);
 
-        foreach (Table other in database.Tables.Cast<Table>())
+        foreach ((string referencingSchema, string referencingName, string fkName) in FindInboundForeignKeyRefs(table, database))
         {
-            foreach (ForeignKey fk in other.ForeignKeys.Cast<ForeignKey>())
+            Table? referencingTable = database.Tables[referencingName, referencingSchema];
+            ForeignKey? fk = referencingTable?.ForeignKeys[fkName];
+            if (referencingTable is null || fk is null)
             {
-                if (string.Equals(fk.ReferencedTableSchema, table.Schema, StringComparison.OrdinalIgnoreCase)
-                    && string.Equals(fk.ReferencedTable, table.Name, StringComparison.OrdinalIgnoreCase))
-                {
-                    ObjectRefDto from = BuildObjectRef(databaseName, other);
-                    result.Add(MapForeignKey(fk, from, to));
-                }
+                continue;
             }
+
+            ObjectRefDto from = BuildObjectRef(databaseName, referencingTable);
+            result.Add(MapForeignKey(fk, from, to));
         }
 
         return result;
+    }
+
+    private static List<(string Schema, string Name, string ForeignKeyName)> FindInboundForeignKeyRefs(Table table, Database database)
+    {
+        Sfc.Urn urn = new(
+            $"{database.Urn}/Table/ForeignKey[@ReferencedTable='{Sfc.Urn.EscapeString(table.Name)}' and @ReferencedTableSchema='{Sfc.Urn.EscapeString(table.Schema)}']");
+
+        Sfc.Request request = new(urn, ["Name"])
+        {
+            ParentPropertiesRequests =
+            [
+                new Sfc.PropertiesRequest
+                {
+                    Fields = ["Schema", "Name"],
+                    PropertyAlias = new Sfc.PropertyAlias(["ParentSchema", "ParentName"]),
+                },
+            ],
+        };
+
+        DataTable matches = new Sfc.Enumerator().Process(database.Parent.ConnectionContext, request);
+
+        List<(string, string, string)> refs = new(matches.Rows.Count);
+        foreach (DataRow row in matches.Rows)
+        {
+            refs.Add(((string)row["ParentSchema"], (string)row["ParentName"], (string)row["Name"]));
+        }
+
+        return refs;
     }
 
     private static ForeignKeyRowDto MapForeignKey(ForeignKey fk, ObjectRefDto from, ObjectRefDto to)

@@ -2,7 +2,7 @@ using System.ComponentModel;
 using Mediator;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
-using ssmsmcp.Application.Databases;
+using ssmsmcp.Application.Tables;
 using ssmsmcp.Server.Mcp.Shared.Abstractions;
 using ssmsmcp.Server.Mcp.tools.Abstractions;
 
