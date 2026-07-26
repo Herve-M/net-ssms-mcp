@@ -1,5 +1,6 @@
 using System.Data;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using Microsoft.SqlServer.Management.Smo;
 using ssmsmcp.Domain.Abstractions.Databases;
 using ssmsmcp.Infrastructure.Abstractions.SSMS;
@@ -7,7 +8,7 @@ using Urn = Microsoft.SqlServer.Management.Sdk.Sfc.Urn;
 
 namespace ssmsmcp.Infrastructure.SSMS;
 
-internal sealed class DatabaseAdapter(IServerConnectionFactory factory, IMemoryCache cache)
+internal sealed class DatabaseAdapter(IServerConnectionFactory factory, IMemoryCache cache, ILogger<DatabaseAdapter> logger)
     : IDatabasePort
 {
 
@@ -26,7 +27,19 @@ internal sealed class DatabaseAdapter(IServerConnectionFactory factory, IMemoryC
                     throw new InvalidOperationException($"Database '{name}' not found on server '{serverName}'.");
                 }
 
-                database.PrefetchObjects();
+                try
+                {
+                    database.PrefetchObjects();
+                }
+                catch (InternalSmoErrorException ex)
+                {
+                    // Known SMO defect: its internal XPath filter engine can throw when stored procedures,
+                    // scalar functions, and CLR aggregates are enumerated together in a single prefetch pass.
+                    // PrefetchObjects() is purely a caching optimization; SMO falls back to lazy per-object
+                    // fetches when it hasn't run, so correctness is unaffected.
+                    logger.LogWarning(ex, "SMO prefetch failed for database '{DatabaseName}' on server '{ServerName}'; continuing without prefetch cache.", name, serverName);
+                }
+
                 return database;
             });
     }

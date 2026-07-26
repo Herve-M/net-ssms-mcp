@@ -21,4 +21,10 @@ internal sealed class ViewAdapter(IDatabasePort databasePort) : IViewPort
         Database database = await databasePort.GetDatabase(serverName, databaseName, cancellationToken);
         return database.Views.Count;
     }
+
+    public async Task<View?> GetView(string serverName, string databaseName, string schema, string name, CancellationToken cancellationToken)
+    {
+        Database database = await databasePort.GetDatabase(serverName, databaseName, cancellationToken);
+        return database.Views[name, schema];
+    }
 }

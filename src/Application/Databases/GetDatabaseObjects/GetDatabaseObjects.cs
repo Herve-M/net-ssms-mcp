@@ -1,5 +1,6 @@
 using Mediator;
 using Microsoft.SqlServer.Management.Smo;
+using ssmsmcp.Application.Abstractions;
 using ssmsmcp.Application.Abstractions.Shared;
 using ssmsmcp.Domain.Abstractions.Databases;
 
@@ -86,7 +87,7 @@ public sealed class GetDatabaseObjectsHandler(IDatabasePort databasePort)
                 Schema = o.Schema,
                 Name = o.Name,
                 TypeDesc = MapTypeDesc(o.Type),
-                Fqn = BuildFqn(request.DatabaseName, o.Schema, o.Name),
+                Fqn = Identifiers.BuildFqn(request.DatabaseName, o.Schema, o.Name),
             })
             .ToArray();
 
@@ -137,36 +138,4 @@ public sealed class GetDatabaseObjectsHandler(IDatabasePort databasePort)
         "ServiceQueue" => "SERVICE_QUEUE",
         _ => smoType.ToUpperInvariant(),
     };
-
-    private static string BuildFqn(string database, string schema, string name) =>
-        $"{Quote(database)}.{Quote(schema)}.{Quote(name)}";
-
-    //TODO: move to a helper?
-    private static string Quote(string identifier) =>
-        IsSimpleIdentifier(identifier) ? identifier : $"[{identifier.Replace("]", "]]")}]";
-
-    //TODO: move to a helper?
-    // escape identifiers with SQL validity
-    private static bool IsSimpleIdentifier(string value)
-    {
-        if (string.IsNullOrEmpty(value))
-        {
-            return false;
-        }
-
-        if (!(char.IsLetter(value[0]) || value[0] == '_'))
-        {
-            return false;
-        }
-
-        foreach (char c in value)
-        {
-            if (!(char.IsLetterOrDigit(c) || c == '_'))
-            {
-                return false;
-            }
-        }
-
-        return true;
-    }
 }
