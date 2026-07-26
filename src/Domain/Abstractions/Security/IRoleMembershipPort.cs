@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace ssmsmcp.Domain.Abstractions.Security;
 
-public sealed record RoleMembershipEdge(
+public sealed record RoleMembershipRecord(
     string Scope,          // SERVER | DATABASE
     string? Database,
     string Role,
@@ -14,7 +14,7 @@ public sealed record RoleMembershipEdge(
 
 public interface IRoleMembershipPort
 {
-    Task<IReadOnlyCollection<RoleMembershipEdge>> GetServerRoleMemberships(string serverName, CancellationToken cancellationToken);
+    Task<IReadOnlyCollection<RoleMembershipRecord>> GetServerRoleMemberships(string serverName, CancellationToken cancellationToken);
 
-    Task<IReadOnlyCollection<RoleMembershipEdge>> GetDatabaseRoleMemberships(string serverName, string databaseName, CancellationToken cancellationToken);
+    Task<IReadOnlyCollection<RoleMembershipRecord>> GetDatabaseRoleMemberships(string serverName, string databaseName, CancellationToken cancellationToken);
 }

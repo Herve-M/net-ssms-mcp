@@ -52,18 +52,26 @@ internal sealed class SecurityTools(IMediator mediator, IDefaultServerName defau
             PageSize = Math.Clamp(page_size, 1, 100),
         };
 
-        PagedResult<PrincipalDto> result = await _mediator.Send(
-            new ListPrincipalsRequest(
-                resolved,
-                database,
-                scope.ToUpperInvariant(),
-                principal_type.ToUpperInvariant(),
-                name_pattern,
-                include_system,
-                pagination),
-            cancellationToken);
+        try
+        {
+            PagedResult<PrincipalDto> result = await _mediator.Send(
+                new ListPrincipalsRequest(
+                    resolved,
+                    database,
+                    scope.ToUpperInvariant(),
+                    principal_type.ToUpperInvariant(),
+                    name_pattern,
+                    include_system,
+                    pagination),
+                cancellationToken);
 
-        return ToolPayload.Structured(result);
+            return ToolPayload.Structured(result);
+        }
+        catch (InvalidOperationException ex)
+        {
+            // The database-scoped path throws when the target database does not exist (SPEC OBJECT_NOT_FOUND).
+            return ToolPayload.NotFound(ex.Message);
+        }
     }
 
     [McpServerTool(
@@ -106,11 +114,19 @@ internal sealed class SecurityTools(IMediator mediator, IDefaultServerName defau
             PageSize = Math.Clamp(page_size, 1, 100),
         };
 
-        PagedResult<RoleMembershipDto> result = await _mediator.Send(
-            new ListRoleMembershipsRequest(resolved, database, scope.ToUpperInvariant(), role, member, include_system, pagination),
-            cancellationToken);
+        try
+        {
+            PagedResult<RoleMembershipDto> result = await _mediator.Send(
+                new ListRoleMembershipsRequest(resolved, database, scope.ToUpperInvariant(), role, member, include_system, pagination),
+                cancellationToken);
 
-        return ToolPayload.Structured(result);
+            return ToolPayload.Structured(result);
+        }
+        catch (InvalidOperationException ex)
+        {
+            // The database-scoped path throws when the target database does not exist (SPEC OBJECT_NOT_FOUND).
+            return ToolPayload.NotFound(ex.Message);
+        }
     }
 
     [McpServerTool(
@@ -151,16 +167,24 @@ internal sealed class SecurityTools(IMediator mediator, IDefaultServerName defau
             PageSize = Math.Clamp(page_size, 1, 100),
         };
 
-        PagedResult<PermissionDto> result = await _mediator.Send(
-            new ListPermissionsRequest(
-                resolved,
-                database,
-                principal_name,
-                securable_type?.ToUpperInvariant(),
-                securable_name,
-                pagination),
-            cancellationToken);
+        try
+        {
+            PagedResult<PermissionDto> result = await _mediator.Send(
+                new ListPermissionsRequest(
+                    resolved,
+                    database,
+                    principal_name,
+                    securable_type?.ToUpperInvariant(),
+                    securable_name,
+                    pagination),
+                cancellationToken);
 
-        return ToolPayload.Structured(result);
+            return ToolPayload.Structured(result);
+        }
+        catch (InvalidOperationException ex)
+        {
+            // The database-scoped path throws when the target database does not exist (SPEC OBJECT_NOT_FOUND).
+            return ToolPayload.NotFound(ex.Message);
+        }
     }
 }

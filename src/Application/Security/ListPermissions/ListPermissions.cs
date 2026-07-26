@@ -1,4 +1,5 @@
 using Mediator;
+using ssmsmcp.Application.Abstractions;
 using ssmsmcp.Application.Abstractions.Shared;
 using ssmsmcp.Domain.Abstractions.Security;
 
@@ -37,7 +38,21 @@ public sealed class ListPermissionsHandler(IPermissionPort permissionPort)
         IReadOnlyCollection<PermissionRecord> records = await _permissionPort.GetPermissions(
             request.ServerName, request.DatabaseName, request.SecurableType, cancellationToken);
 
-        IEnumerable<PermissionRecord> filtered = records;
+        IEnumerable<PermissionDto> filtered = records
+            .Select(r => new PermissionDto
+            {
+                Principal = r.Principal,
+                PrincipalType = r.PrincipalType,
+                PermissionName = r.PermissionName,
+                State = r.State,
+                Securable = r.SecurableSchema is null
+                    ? r.Securable
+                    : Identifiers.BuildQualifiedName(r.SecurableSchema, r.Securable),
+                SecurableType = r.SecurableType,
+                Grantor = r.Grantor,
+                IsInherited = false,
+                InheritedViaRole = null,
+            });
 
         if (!string.IsNullOrEmpty(request.PrincipalName))
         {
@@ -50,18 +65,6 @@ public sealed class ListPermissionsHandler(IPermissionPort permissionPort)
         }
 
         List<PermissionDto> sorted = filtered
-            .Select(r => new PermissionDto
-            {
-                Principal = r.Principal,
-                PrincipalType = r.PrincipalType,
-                PermissionName = r.PermissionName,
-                State = r.State,
-                Securable = r.Securable,
-                SecurableType = r.SecurableType,
-                Grantor = r.Grantor,
-                IsInherited = false,
-                InheritedViaRole = null,
-            })
             .OrderBy(r => r.Principal, StringComparer.OrdinalIgnoreCase)
             .ThenBy(r => r.SecurableType, StringComparer.Ordinal)
             .ThenBy(r => r.Securable, StringComparer.OrdinalIgnoreCase)

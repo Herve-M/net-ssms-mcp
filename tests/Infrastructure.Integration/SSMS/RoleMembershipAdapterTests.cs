@@ -38,7 +38,7 @@ public sealed class RoleMembershipAdapterTests(SqlServerFixture fixture)
         RoleMembershipAdapter adapter = CreateAdapter(version, out IServerConnectionFactory factory);
 
         // Act
-        IReadOnlyCollection<RoleMembershipEdge> edges = await adapter.GetServerRoleMemberships(
+        IReadOnlyCollection<RoleMembershipRecord> edges = await adapter.GetServerRoleMemberships(
             DataSourceName, TestContext.Current.CancellationToken);
 
         // Assert
@@ -59,7 +59,7 @@ public sealed class RoleMembershipAdapterTests(SqlServerFixture fixture)
         RoleMembershipAdapter adapter = CreateAdapter(version, out IServerConnectionFactory factory);
 
         // Act
-        IReadOnlyCollection<RoleMembershipEdge> edges = await adapter.GetDatabaseRoleMemberships(
+        IReadOnlyCollection<RoleMembershipRecord> edges = await adapter.GetDatabaseRoleMemberships(
             DataSourceName, spec.DatabaseName, TestContext.Current.CancellationToken);
 
         // Assert

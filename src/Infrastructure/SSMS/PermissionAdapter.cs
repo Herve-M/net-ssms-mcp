@@ -21,7 +21,7 @@ internal sealed class PermissionAdapter(IServerPort serverPort, IDatabasePort da
             Server server = await serverPort.GetServer(serverName, cancellationToken);
             foreach (ServerPermissionInfo info in server.EnumServerPermissions())
             {
-                records.AddRange(Expand(info, info.PermissionType.ToString(), "SERVER", server.Name));
+                records.AddRange(Expand(info, info.PermissionType.ToString(), "SERVER", server.Name, securableSchema: null));
             }
         }
 
@@ -38,7 +38,7 @@ internal sealed class PermissionAdapter(IServerPort serverPort, IDatabasePort da
             {
                 foreach (DatabasePermissionInfo info in database.EnumDatabasePermissions())
                 {
-                    records.AddRange(Expand(info, info.PermissionType.ToString(), "DATABASE", database.Name));
+                    records.AddRange(Expand(info, info.PermissionType.ToString(), "DATABASE", database.Name, securableSchema: null));
                 }
             }
 
@@ -46,10 +46,9 @@ internal sealed class PermissionAdapter(IServerPort serverPort, IDatabasePort da
             {
                 foreach (ObjectPermissionInfo info in database.EnumObjectPermissions())
                 {
-                    string securable = string.IsNullOrEmpty(info.ObjectSchema)
-                        ? info.ObjectName
-                        : $"[{info.ObjectSchema}].[{info.ObjectName}]";
-                    records.AddRange(Expand(info, info.PermissionType.ToString(), "OBJECT", securable));
+                    // Pass the raw object schema/name; the Application handler qualifies and quotes the display name.
+                    string? schema = string.IsNullOrEmpty(info.ObjectSchema) ? null : info.ObjectSchema;
+                    records.AddRange(Expand(info, info.PermissionType.ToString(), "OBJECT", info.ObjectName, schema));
                 }
             }
         }
@@ -57,7 +56,7 @@ internal sealed class PermissionAdapter(IServerPort serverPort, IDatabasePort da
         return records;
     }
 
-    private static IEnumerable<PermissionRecord> Expand(PermissionInfo info, string permissionTypeText, string securableType, string securable)
+    private static IEnumerable<PermissionRecord> Expand(PermissionInfo info, string permissionTypeText, string securableType, string securable, string? securableSchema)
     {
         string state = info.PermissionState switch
         {
@@ -76,7 +75,8 @@ internal sealed class PermissionAdapter(IServerPort serverPort, IDatabasePort da
                 state,
                 securable,
                 securableType,
-                info.Grantor);
+                info.Grantor,
+                securableSchema);
         }
     }
 

@@ -7,7 +7,7 @@ namespace ssmsmcp.Infrastructure.SSMS;
 
 internal sealed class RoleMembershipAdapter(IServerPort serverPort, IDatabasePort databasePort) : IRoleMembershipPort
 {
-    public async Task<IReadOnlyCollection<RoleMembershipEdge>> GetServerRoleMemberships(string serverName, CancellationToken cancellationToken)
+    public async Task<IReadOnlyCollection<RoleMembershipRecord>> GetServerRoleMemberships(string serverName, CancellationToken cancellationToken)
     {
         Server server = await serverPort.GetServer(serverName, cancellationToken);
 
@@ -18,7 +18,7 @@ internal sealed class RoleMembershipAdapter(IServerPort serverPort, IDatabasePor
             .Cast<ServerRole>()
             .ToDictionary(r => r.Name, _ => "SERVER_ROLE", StringComparer.OrdinalIgnoreCase);
 
-        List<RoleMembershipEdge> edges = new();
+        List<RoleMembershipRecord> edges = new();
         foreach (ServerRole role in server.Roles.Cast<ServerRole>())
         {
             foreach (string member in role.EnumMemberNames().Cast<string>())
@@ -26,14 +26,14 @@ internal sealed class RoleMembershipAdapter(IServerPort serverPort, IDatabasePor
                 string memberType = roleNames.TryGetValue(member, out string? rt) ? rt
                     : loginTypes.TryGetValue(member, out string? lt) ? lt
                     : "UNKNOWN";
-                edges.Add(new RoleMembershipEdge("SERVER", null, role.Name, "SERVER_ROLE", member, memberType));
+                edges.Add(new RoleMembershipRecord("SERVER", null, role.Name, "SERVER_ROLE", member, memberType));
             }
         }
 
         return edges;
     }
 
-    public async Task<IReadOnlyCollection<RoleMembershipEdge>> GetDatabaseRoleMemberships(string serverName, string databaseName, CancellationToken cancellationToken)
+    public async Task<IReadOnlyCollection<RoleMembershipRecord>> GetDatabaseRoleMemberships(string serverName, string databaseName, CancellationToken cancellationToken)
     {
         Database database = await databasePort.GetDatabase(serverName, databaseName, cancellationToken);
 
@@ -44,7 +44,7 @@ internal sealed class RoleMembershipAdapter(IServerPort serverPort, IDatabasePor
             .Cast<DatabaseRole>()
             .ToDictionary(r => r.Name, _ => "DATABASE_ROLE", StringComparer.OrdinalIgnoreCase);
 
-        List<RoleMembershipEdge> edges = new();
+        List<RoleMembershipRecord> edges = new();
         foreach (DatabaseRole role in database.Roles.Cast<DatabaseRole>())
         {
             foreach (string member in role.EnumMembers().Cast<string>())
@@ -52,7 +52,7 @@ internal sealed class RoleMembershipAdapter(IServerPort serverPort, IDatabasePor
                 string memberType = roleNames.TryGetValue(member, out string? rt) ? rt
                     : userTypes.TryGetValue(member, out string? ut) ? ut
                     : "UNKNOWN";
-                edges.Add(new RoleMembershipEdge("DATABASE", databaseName, role.Name, "DATABASE_ROLE", member, memberType));
+                edges.Add(new RoleMembershipRecord("DATABASE", databaseName, role.Name, "DATABASE_ROLE", member, memberType));
             }
         }
 

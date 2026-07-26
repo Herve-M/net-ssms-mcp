@@ -40,7 +40,7 @@ public sealed class ListRoleMembershipsHandler(IRoleMembershipPort membershipPor
     {
         request.Pagination.Validate();
 
-        List<RoleMembershipEdge> edges = new();
+        List<RoleMembershipRecord> edges = new();
 
         if (request.Scope is "SERVER" or "BOTH")
         {
@@ -52,7 +52,7 @@ public sealed class ListRoleMembershipsHandler(IRoleMembershipPort membershipPor
             edges.AddRange(await _membershipPort.GetDatabaseRoleMemberships(request.ServerName, request.DatabaseName, cancellationToken));
         }
 
-        IEnumerable<RoleMembershipEdge> filtered = edges;
+        IEnumerable<RoleMembershipRecord> filtered = edges;
 
         if (!request.IncludeSystem)
         {
