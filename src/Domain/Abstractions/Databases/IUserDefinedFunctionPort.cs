@@ -10,4 +10,6 @@ public interface IUserDefinedFunctionPort
     Task<IReadOnlyCollection<UserDefinedFunction>> GetDatabaseUserDefinedFunctions(string serverName, string databaseName, int skip, int take, CancellationToken cancellationToken);
 
     Task<int> GetDatabaseUserDefinedFunctionsCount(string serverName, string databaseName, CancellationToken cancellationToken);
+
+    Task<UserDefinedFunction?> GetUserDefinedFunction(string serverName, string databaseName, string schema, string name, CancellationToken cancellationToken);
 }

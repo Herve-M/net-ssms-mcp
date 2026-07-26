@@ -169,6 +169,7 @@ public sealed class DependencyInjectionBuilder(
             .AddSingleton<IViewPort, ViewAdapter>()
             .AddSingleton<IStoredProcedurePort, StoredProcedureAdapter>()
             .AddSingleton<IUserDefinedFunctionPort, UserDefinedFunctionAdapter>()
+            .AddSingleton<IUserDefinedAggregatePort, UserDefinedAggregateAdapter>()
             .AddSingleton<IUserDefinedTypePort, UserDefinedTypeAdapter>()
             .AddSingleton<IUserDefinedTableTypePort, UserDefinedTableTypeAdapter>()
             .AddSingleton<IUserPort, UserAdapter>()
@@ -186,7 +187,7 @@ public sealed class DependencyInjectionBuilder(
                 .GetSection(MainConfiguration.ConfigurationSectionName)
                 .Bind(config);
 
-            foreach (var dataSource in config.DataSources)
+            foreach (DataSource dataSource in config.DataSources)
             {
                 HealthChecksBuilder.AddSqlServer(dataSource.ConnectionString, name: $"sqlserver-{dataSource.Name}");
             }

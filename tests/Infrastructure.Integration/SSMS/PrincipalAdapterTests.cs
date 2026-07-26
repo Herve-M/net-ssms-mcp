@@ -1,5 +1,6 @@
 using AwesomeAssertions;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.SqlServer.Management.Smo;
 using ssmsmcp.Domain.Abstractions.Databases;
 using ssmsmcp.Domain.Abstractions.Servers;
@@ -23,7 +24,7 @@ public sealed class PrincipalAdapterTests(SqlServerFixture fixture)
             new DataSource { Name = DataSourceName, ConnectionString = fixture.GetConnectionString(version) });
 
         IServerPort serverPort = new ServerAdapter(factory);
-        IDatabasePort databasePort = new DatabaseAdapter(factory, new MemoryCache(new MemoryCacheOptions()));
+        IDatabasePort databasePort = new DatabaseAdapter(factory, new MemoryCache(new MemoryCacheOptions()), NullLogger<DatabaseAdapter>.Instance);
 
         return new PrincipalAdapter(serverPort, databasePort);
     }

@@ -68,8 +68,10 @@ public sealed class SqlServerFixture : IAsyncLifetime
         SqlServerImageSpec spec, IFutureDockerImage image, string backupDir)
     {
         // Poll until the AdventureWorksLT restore (run asynchronously by configure-db.sh) completes.
+        // A database mid-RESTORE already has a row in sys.databases (state_desc = 'RESTORING'), so
+        // existence alone is not sufficient — wait for state_desc = 'ONLINE' too.
         string waitQuery =
-            $"SET NOCOUNT ON; SELECT COUNT(*) FROM sys.databases WHERE name = '{spec.DatabaseName}'";
+            $"SET NOCOUNT ON; SELECT COUNT(*) FROM sys.databases WHERE name = '{spec.DatabaseName}' AND state_desc = 'ONLINE'";
         string waitCmd =
             $"/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"$MSSQL_SA_PASSWORD\" -C -h -1 -W " +
             $"-Q \"{waitQuery}\" | grep -q 1";
