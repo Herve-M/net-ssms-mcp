@@ -1,5 +1,6 @@
 using Mediator;
 using Microsoft.SqlServer.Management.Smo;
+using ssmsmcp.Application.Abstractions;
 using ssmsmcp.Application.Abstractions.Shared;
 using ssmsmcp.Domain.Abstractions.Databases;
 

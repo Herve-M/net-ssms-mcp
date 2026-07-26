@@ -2,7 +2,7 @@ using Microsoft.SqlServer.Management.Smo;
 using ssmsmcp.Application.Tables;
 using Index = Microsoft.SqlServer.Management.Smo.Index;
 
-namespace ssmsmcp.Application.Databases;
+namespace ssmsmcp.Application.Abstractions;
 
 internal static class TableViewMappers
 {

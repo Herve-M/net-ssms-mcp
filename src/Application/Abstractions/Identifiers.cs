@@ -1,4 +1,4 @@
-namespace ssmsmcp.Application.Databases;
+namespace ssmsmcp.Application.Abstractions;
 
 internal static class Identifiers
 {
