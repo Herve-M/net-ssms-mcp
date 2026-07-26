@@ -148,8 +148,8 @@ internal sealed class SecurityTools(IMediator mediator, IDefaultServerName defau
         string? securable_type = null,
         [Description("Case-insensitive substring of the securable name (FQN) to filter on. Null returns all.")]
         string? securable_name = null,
-        [Description("Reserved / not yet applied: intended to include role-inherited permissions for principal_name. Currently only direct grants are returned.")]
-        bool include_inherited = true, //TODO: inherited permission union
+        [Description("Per SPEC §7.20 this defaults to true, but role-inherited permissions are NOT yet expanded: only directly granted permissions are returned regardless of this value. Reserved until inherited expansion is implemented.")]
+        bool include_inherited = true, //TODO: inherited permission union (SPEC §7.20)
         [Description("Page number (1-based).")]
         int page = 1,
         [Description("Number of items per page (max 100).")]

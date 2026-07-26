@@ -28,13 +28,28 @@ public sealed record ListRoleMembershipsRequest(
 public sealed class ListRoleMembershipsHandler(IRoleMembershipPort membershipPort)
     : IRequestHandler<ListRoleMembershipsRequest, PagedResult<RoleMembershipDto>>
 {
+    // https://learn.microsoft.com/en-us/sql/relational-databases/security/authentication-access/server-level-roles?view=sql-server-ver17
     private static readonly HashSet<string> FixedServerRoles = new(StringComparer.OrdinalIgnoreCase)
     {
         "sysadmin", "securityadmin", "serveradmin", "setupadmin", "processadmin",
         "diskadmin", "dbcreator", "bulkadmin", "public",
     };
 
+    // Legacy server roles are prefixed and suffixed with double-hash marks => (##MS_DatabaseConnector##, etc.)
+    private static bool IsFixedServerRole(string role) =>
+        FixedServerRoles.Contains(role)
+        || (role.StartsWith("##", StringComparison.Ordinal) && role.EndsWith("##", StringComparison.Ordinal));
+
+    // https://learn.microsoft.com/en-us/sql/relational-databases/security/authentication-access/database-level-roles?view=sql-server-ver17
+    private static readonly HashSet<string> FixedDatabaseRoles = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "public", "db_owner", "db_accessadmin", "db_securityadmin", "db_ddladmin",
+        "db_backupoperator", "db_datareader", "db_datawriter",
+        "db_denydatareader", "db_denydatawriter",
+    };
+
     private readonly IRoleMembershipPort _membershipPort = membershipPort;
+
 
     public async ValueTask<PagedResult<RoleMembershipDto>> Handle(ListRoleMembershipsRequest request, CancellationToken cancellationToken)
     {
@@ -56,8 +71,8 @@ public sealed class ListRoleMembershipsHandler(IRoleMembershipPort membershipPor
 
         if (!request.IncludeSystem)
         {
-            filtered = filtered.Where(e => !(e.Scope == "SERVER" && FixedServerRoles.Contains(e.Role))
-                                        && !(e.Scope == "DATABASE" && e.Role.StartsWith("db_", StringComparison.OrdinalIgnoreCase)));
+            filtered = filtered.Where(e => !(e.Scope == "SERVER" && IsFixedServerRole(e.Role))
+                                        && !(e.Scope == "DATABASE" && FixedDatabaseRoles.Contains(e.Role)));
         }
 
         if (!string.IsNullOrEmpty(request.Role))

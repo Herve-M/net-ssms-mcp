@@ -177,24 +177,24 @@ internal static class PrincipalMapper
         ModifyDate = role.DateLastModified,
     };
 
+    private static readonly HashSet<string> SystemPrincipalNames = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "sa", "public", "dbo", "guest", "INFORMATION_SCHEMA", "sys",
+    };
+
     public static bool IsSystem(PrincipalDto p)
     {
+        // Fixed server/database roles are already flagged via SMO's IsFixedRole.
         if (p.IsFixedRole == true)
         {
             return true;
         }
 
         string n = p.Name;
-        return n == "sa"
-            || n == "public"
-            || n == "dbo"
-            || n == "guest"
-            || n == "INFORMATION_SCHEMA"
-            || n == "sys"
+        return SystemPrincipalNames.Contains(n)
             || (n.StartsWith("##", StringComparison.Ordinal) && n.EndsWith("##", StringComparison.Ordinal))
             || n.StartsWith("NT SERVICE\\", StringComparison.OrdinalIgnoreCase)
-            || n.StartsWith("NT AUTHORITY\\", StringComparison.OrdinalIgnoreCase)
-            || n.StartsWith("db_", StringComparison.OrdinalIgnoreCase);
+            || n.StartsWith("NT AUTHORITY\\", StringComparison.OrdinalIgnoreCase);
     }
 
     private static string? ToHex(byte[]? sid) => sid is null || sid.Length == 0 ? null : "0x" + Convert.ToHexString(sid);
