@@ -1,10 +1,8 @@
-using System.Data;
 using Mediator;
 using Microsoft.SqlServer.Management.Smo;
 using ssmsmcp.Application.Abstractions;
 using ssmsmcp.Application.Databases;
 using ssmsmcp.Domain.Abstractions.Databases;
-using Sfc = Microsoft.SqlServer.Management.Sdk.Sfc;
 
 namespace ssmsmcp.Application.Tables;
 
@@ -135,7 +133,7 @@ public sealed class DescribeTableHandler(ITablePort tablePort, IDatabasePort dat
         {
             Database database = await _databasePort.GetDatabase(request.ServerName, request.DatabaseName, cancellationToken);
             outbound = MapOutboundForeignKeys(table, database, request.DatabaseName);
-            inbound = MapInboundForeignKeys(table, database, request.DatabaseName);
+            inbound = await MapInboundForeignKeys(request, table, database, cancellationToken);
         }
 
         List<CheckConstraintDto> checks = request.IncludeCheckConstraints ? MapChecks(table) : [];
@@ -233,53 +231,29 @@ public sealed class DescribeTableHandler(ITablePort tablePort, IDatabasePort dat
         return result;
     }
 
-    private List<ForeignKeyRowDto> MapInboundForeignKeys(Table table, Database database, string databaseName)
+    private async Task<List<ForeignKeyRowDto>> MapInboundForeignKeys(
+        DescribeTableRequest request, Table table, Database database, CancellationToken cancellationToken)
     {
         List<ForeignKeyRowDto> result = [];
-        ObjectRefDto to = BuildObjectRef(databaseName, table);
+        ObjectRefDto to = BuildObjectRef(request.DatabaseName, table);
 
-        foreach ((string referencingSchema, string referencingName, string fkName) in FindInboundForeignKeyRefs(table, database))
+        IReadOnlyCollection<InboundForeignKeyReference> references = await _tablePort.GetInboundForeignKeyReferences(
+            request.ServerName, request.DatabaseName, table.Schema, table.Name, cancellationToken);
+
+        foreach (InboundForeignKeyReference reference in references)
         {
-            Table? referencingTable = database.Tables[referencingName, referencingSchema];
-            ForeignKey? fk = referencingTable?.ForeignKeys[fkName];
+            Table? referencingTable = database.Tables[reference.Name, reference.Schema];
+            ForeignKey? fk = referencingTable?.ForeignKeys[reference.ForeignKeyName];
             if (referencingTable is null || fk is null)
             {
                 continue;
             }
 
-            ObjectRefDto from = BuildObjectRef(databaseName, referencingTable);
+            ObjectRefDto from = BuildObjectRef(request.DatabaseName, referencingTable);
             result.Add(MapForeignKey(fk, from, to));
         }
 
         return result;
-    }
-
-    private static List<(string Schema, string Name, string ForeignKeyName)> FindInboundForeignKeyRefs(Table table, Database database)
-    {
-        Sfc.Urn urn = new(
-            $"{database.Urn}/Table/ForeignKey[@ReferencedTable='{Sfc.Urn.EscapeString(table.Name)}' and @ReferencedTableSchema='{Sfc.Urn.EscapeString(table.Schema)}']");
-
-        Sfc.Request request = new(urn, ["Name"])
-        {
-            ParentPropertiesRequests =
-            [
-                new Sfc.PropertiesRequest
-                {
-                    Fields = ["Schema", "Name"],
-                    PropertyAlias = new Sfc.PropertyAlias(["ParentSchema", "ParentName"]),
-                },
-            ],
-        };
-
-        DataTable matches = new Sfc.Enumerator().Process(database.Parent.ConnectionContext, request);
-
-        List<(string, string, string)> refs = new(matches.Rows.Count);
-        foreach (DataRow row in matches.Rows)
-        {
-            refs.Add(((string)row["ParentSchema"], (string)row["ParentName"], (string)row["Name"]));
-        }
-
-        return refs;
     }
 
     private static ForeignKeyRowDto MapForeignKey(ForeignKey fk, ObjectRefDto from, ObjectRefDto to)

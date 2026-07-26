@@ -62,4 +62,41 @@ public sealed class TableAdapterTests(SqlServerFixture fixture)
         table.Should().BeNull();
         factory.Dispose();
     }
+
+    [Theory]
+    [InlineData(SqlServerVersion.Sql2022)]
+    [InlineData(SqlServerVersion.Sql2025)]
+    public async Task GetInboundForeignKeyReferences_ForReferencedTable_ReturnsReferencingTables(SqlServerVersion version)
+    {
+        // Arrange
+        SqlServerImageSpec spec = SqlServerImageSpec.For(version);
+        TableAdapter adapter = CreateAdapter(version, out IServerConnectionFactory factory);
+
+        // Act
+        IReadOnlyCollection<InboundForeignKeyReference> references = await adapter.GetInboundForeignKeyReferences(
+            DataSourceName, spec.DatabaseName, "SalesLT", "Product", TestContext.Current.CancellationToken);
+
+        // Assert
+        references.Should().NotBeEmpty();
+        references.Should().Contain(r => r.Schema == "SalesLT" && r.Name == "SalesOrderDetail");
+        factory.Dispose();
+    }
+
+    [Theory]
+    [InlineData(SqlServerVersion.Sql2022)]
+    [InlineData(SqlServerVersion.Sql2025)]
+    public async Task GetInboundForeignKeyReferences_ForUnreferencedTable_ReturnsEmpty(SqlServerVersion version)
+    {
+        // Arrange
+        SqlServerImageSpec spec = SqlServerImageSpec.For(version);
+        TableAdapter adapter = CreateAdapter(version, out IServerConnectionFactory factory);
+
+        // Act
+        IReadOnlyCollection<InboundForeignKeyReference> references = await adapter.GetInboundForeignKeyReferences(
+            DataSourceName, spec.DatabaseName, "SalesLT", "SalesOrderDetail", TestContext.Current.CancellationToken);
+
+        // Assert
+        references.Should().BeEmpty();
+        factory.Dispose();
+    }
 }
