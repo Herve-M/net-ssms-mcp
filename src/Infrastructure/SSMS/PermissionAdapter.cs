@@ -13,7 +13,8 @@ internal sealed class PermissionAdapter(IServerPort serverPort, IDatabasePort da
         List<PermissionRecord> records = new();
 
         bool wantServer = securableType is null or "SERVER";
-        bool wantDatabase = securableType is null or "DATABASE" or "SCHEMA";
+        bool wantDatabase = securableType is null or "DATABASE";
+        bool wantSchema = securableType is null or "SCHEMA";
         bool wantObject = securableType is null or "OBJECT";
 
         if (wantServer)
@@ -25,7 +26,7 @@ internal sealed class PermissionAdapter(IServerPort serverPort, IDatabasePort da
             }
         }
 
-        if (wantDatabase || wantObject)
+        if (wantDatabase || wantSchema || wantObject)
         {
             if (databaseName is null)
             {
@@ -39,6 +40,17 @@ internal sealed class PermissionAdapter(IServerPort serverPort, IDatabasePort da
                 foreach (DatabasePermissionInfo info in database.EnumDatabasePermissions())
                 {
                     records.AddRange(Expand(info, info.PermissionType.ToString(), "DATABASE", database.Name, securableSchema: null));
+                }
+            }
+
+            if (wantSchema)
+            {
+                foreach (Schema schema in database.Schemas.Cast<Schema>())
+                {
+                    foreach (ObjectPermissionInfo info in schema.EnumObjectPermissions())
+                    {
+                        records.AddRange(Expand(info, info.PermissionType.ToString(), "SCHEMA", schema.Name, securableSchema: null));
+                    }
                 }
             }
 
