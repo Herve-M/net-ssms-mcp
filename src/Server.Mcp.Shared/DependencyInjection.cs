@@ -27,6 +27,7 @@ public static class DependencyInjection
             .WithTools<TableTools>()
             .WithTools<ViewTools>()
             .WithTools<ProcedureTools>()
+            .WithTools<SecurityTools>()
             ;
     }
 }
