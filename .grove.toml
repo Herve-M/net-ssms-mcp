@@ -1,0 +1,48 @@
+# Grove - Git worktree management
+# https://github.com/sqve/grove
+
+[preserve]
+patterns = [
+  "CLAUDE.local.md",
+]
+
+# Path segments to exclude from preservation.
+# Files containing any of these path segments will be skipped.
+exclude = []
+
+# Directories to recursively copy when creating a new worktree.
+# Unlike preserve.patterns (which matches individual ignored files by glob),
+# this copies entire directory trees regardless of git ignore status.
+directories = []
+
+[link]
+# Directories to symlink from the source worktree when creating a new one.
+# Useful for sharing tool state across worktrees.
+# Matched against directory names in the worktree root.
+# Creates relative symlinks so the workspace remains portable.
+patterns = []
+
+[hooks]
+# Shell commands to run after creating a worktree.
+# Runs sequentially, stops on first failure.
+# Examples: ["npm install"], ["go mod download", "make setup"]
+add = []
+
+[autolock]
+# Branch patterns to automatically lock when creating worktrees.
+# Locked worktrees are protected from accidental deletion.
+# Supports exact matches and trailing /* wildcards (e.g., "release/*").
+patterns = ["main"]
+
+# Use Nerd Font icons in output (when not in plain mode).
+nerd_fonts = true
+
+# Threshold for marking worktrees as stale (no commits within this period).
+# Format: number followed by d (days), w (weeks), or m (months).
+stale_threshold = "30d"
+
+# Disable colors and symbols in output.
+plain = false
+
+# Enable debug logging.
+debug = false
