@@ -24,3 +24,6 @@ docs/
 # Local docker bake / compose outputs
 *.tar
 *.tar.gz
+
+# AI
+.claude/

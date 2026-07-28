@@ -187,8 +187,11 @@ trim_trailing_whitespace = false
 indent_size = 2
 
 # Data serialization
-[*.{json,yaml,yml}]
+[*.{yaml,yml}]
 indent_size = 2
+
+[*.{json}]
+indent_size = 4
 
 # Shell scripts
 [*.sh]
