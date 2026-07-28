@@ -1,47 +1,55 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
 // README at: https://github.com/devcontainers/templates/tree/main/src/dotnet
 {
-	"name": "net-template",
-	"image": "mcr.microsoft.com/devcontainers/dotnet:2-10.0-noble",
-	"features": {
-		"ghcr.io/devcontainers/features/dotnet:2": {
-			"tabCompletions": true,
-			"version": "lts"
-		}
-	},
+    "name": "net-template",
+    "image": "mcr.microsoft.com/devcontainers/dotnet:2-10.0-noble",
+    "features": {
+        "ghcr.io/devcontainers/features/dotnet:2": {
+            "tabCompletions": true,
+            "version": "lts"
+        },
+        "ghcr.io/anthropics/devcontainer-features/claude-code:1.0": {}
+    },
 
-	// Features to add to the dev container. More info: https://containers.dev/features.
-	// "features": {},
+    // Use 'forwardPorts' to make a list of ports inside the container available locally.
+    // "forwardPorts": [5000, 5001],
+    // "portsAttributes": {
+    //		"5001": {
+    //			"protocol": "https"
+    //		}
+    // }
 
-	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	// "forwardPorts": [5000, 5001],
-	// "portsAttributes": {
-	//		"5001": {
-	//			"protocol": "https"
-	//		}
-	// }
+    // Use 'postCreateCommand' to run commands after the container is created.
+    // "postCreateCommand": "dotnet restore",
 
-	// Use 'postCreateCommand' to run commands after the container is created.
-	// "postCreateCommand": "dotnet restore",
+    // Configure tool-specific properties.
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "esbenp.prettier-vscode",
+                "redhat.vscode-yaml",
+                "darkriszty.markdown-table-prettify",
+                "yzhang.markdown-all-in-one",
+                "ms-dotnettools.csdevkit",
+                "microsoft-aspire.aspire-vscode",
+                "anthropic.claude-code"
+            ]
+        }
+    },
 
-	// Configure tool-specific properties.
-	"customizations": {
-		"vscode": {
-			"extensions": [
-				"esbenp.prettier-vscode",
-				"redhat.vscode-yaml",
-				"darkriszty.markdown-table-prettify",
-				"yzhang.markdown-all-in-one",
-				"ms-dotnettools.csdevkit",
-				"microsoft-aspire.aspire-vscode"
-			]
-		}
-	},
+    "containerEnv": {
+        "CLAUDE_CONFIG_DIR": "/home/vscode/.claude",
+        "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1"
+    },
 
-	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
-	// "remoteUser": "root"
+    // Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+    // "remoteUser": "root"
 
-	// Comment out when not using git-worktree
-	"workspaceMount": "source=${localWorkspaceFolder}/..,target=/workspace,type=bind,consistency=cached",
-	"workspaceFolder": "/workspace/${localWorkspaceFolderBasename}"
+    "mounts": [
+        "source=claude-code-config-${devcontainerId},target=/home/vscode/.claude,type=volume"
+    ],
+
+    // Comment out when not using git-worktree
+    "workspaceMount": "source=${localWorkspaceFolder}/..,target=/workspace,type=bind,consistency=cached",
+    "workspaceFolder": "/workspace/${localWorkspaceFolderBasename}"
 }
