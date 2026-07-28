@@ -8,6 +8,13 @@
         "minver"
       ],
       "rollForward": false
+    },
+    "csharp-ls": {
+      "version": "0.26.0",
+      "commands": [
+        "csharp-ls"
+      ],
+      "rollForward": false
     }
   }
 }
