@@ -38,23 +38,34 @@ introspection. Prefer the object's numeric `object_id` over interpolating user i
 
 ## Identifier safety
 
-Identifiers cannot be SQL parameters — they must be injected as text, which is exactly where
-injection bugs come from. Two safe shapes:
+Identifiers cannot be SQL parameters — they have to be injected as text, which is exactly where
+injection bugs come from. **Today no user-supplied identifier ever reaches SQL text.** The only
+raw-SQL site, `SSMS/StoredProcedureAdapter.DescribeFirstResultSet`, interpolates a numeric
+`objectId` into `sys.dm_exec_describe_first_result_set_for_object({objectId}, 0)` — which is the
+rule `CLAUDE.md` states: prefer the object's numeric `object_id` over any string from the caller.
+Keep it that way.
+
+There **is** an `Identifiers` helper, but note what it is for:
+`src/Application/Abstractions/Identifiers.cs` (`internal static`) builds the delimited display
+FQNs the DTOs expose — `BuildFqn(db, schema, name)` → `[db].[schema].[name]`,
+`BuildQualifiedName`, `Quote` — per `SPEC §2.5`. It brackets only when the identifier is not
+`[A-Za-z_][A-Za-z0-9_]*` and escapes embedded `]` as `]]`. It is Application-layer presentation
+code, called only from `Fqn = …` mappings; it is **not** a SQL guard and is not reachable from
+this layer.
+
+If an identifier ever genuinely has to be interpolated into SQL, `Identifiers.Quote` alone is
+**not sufficient** — it performs no validation. Add the guard first: reject any identifier
+containing a NUL byte or exceeding 128 characters (the T-SQL limit), then quote. Better still,
+keep the identifier out of the SQL text entirely:
 
 ```csharp
 // Preferred: the identifier never reaches the SQL text.
 cmd.Parameters.AddWithValue("@schema", schema);
 cmd.Parameters.AddWithValue("@pattern", pattern);
 // ... WHERE schema_id = SCHEMA_ID(@schema) AND name LIKE @pattern
-
-// When interpolation is unavoidable: validate, then quote.
-var safeDb = Identifiers.QuoteName(database);
-var sql = $"SELECT * FROM {safeDb}.sys.objects WHERE ...";
 ```
 
-A `QuoteName` helper wraps in `[...]` and escapes embedded `]` as `]]`. Reject any identifier
-containing a NUL byte or exceeding 128 characters (the T-SQL limit). Never build an identifier by
-plain string concatenation.
+Never build an identifier by plain string concatenation.
 
 ## DMVs
 
