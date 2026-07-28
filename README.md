@@ -6,8 +6,7 @@ A read-only MCP server that exposes Microsoft SQL Server **metadata** — instan
 [![stdio-mcp](https://github.com/Herve-M/net-ssms-mcp/actions/workflows/server-mcp.yml/badge.svg)](https://github.com/Herve-M/net-ssms-mcp/actions/workflows/server-mcp.yml)
 [![http-mcp](https://github.com/Herve-M/net-ssms-mcp/actions/workflows/server-api.yml/badge.svg)](https://github.com/Herve-M/net-ssms-mcp/actions/workflows/server-api.yml)
 [![codeql-analysis](https://github.com/Herve-M/net-ssms-mcp/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/Herve-M/net-ssms-mcp/actions/workflows/codeql-analysis.yml)
-[![NuGet](https://img.shields.io/nuget/v/ssms-mcp)](https://github.com/Herve-M/net-ssms-mcp/pkgs/nuget/ssms-mcp
-)
+[![GitHub Packages](https://img.shields.io/badge/GitHub%20Packages-ssms--mcp-blue?logo=github)](https://github.com/Herve-M/net-ssms-mcp/pkgs/nuget/ssms-mcp)
 [![License: MPL 2.0](https://img.shields.io/badge/License-MPL_2.0-brightgreen.svg)](./LICENSE)
 
 > [!IMPORTANT]
@@ -27,9 +26,9 @@ Integration tests run each tool against **SQL Server 2022 and 2025** containers 
 | `describe_table`        | Columns, indexes, FKs, constraints, stats                    |      ✅      | 2022, 2025                  |
 | `describe_view`         | View columns and definition                                  |      ✅      | 2022, 2025                  |
 | `describe_procedure`    | Parameters, return shape, body (T-SQL) or assembly ref (CLR) |      ✅      | 2022, 2025                  |
-| `list_principals`       | Flat, paginated list of logins, users and roles              |      ✅      | 2022, 2025 — stdio only     |
-| `list_role_memberships` | Role → member edges, optionally transitive                   |      ✅      | 2022, 2025 — stdio only     |
-| `list_permissions`      | Effective and granted permissions                            |      ✅      | 2022, 2025 — stdio only     |
+| `list_principals`       | Flat, paginated list of logins, users and roles              |      ✅      | 2022, 2025                  |
+| `list_role_memberships` | Role → member edges, optionally transitive                   |      ✅      | 2022, 2025                  |
+| `list_permissions`      | Effective and granted permissions                            |      ✅      | 2022, 2025                  |
 | `get_foreign_keys`      | FK relationships in/out of a table                           |      ❌      | —                           |
 | `get_dependencies`      | Recursive dependency tree                                    |      ❌      | —                           |
 | `get_dependency_path`   | Paths between two objects                                    |      ❌      | —                           |
@@ -71,4 +70,4 @@ _Planned tools and their contracts are defined in [`docs/SPEC.md`](./docs/SPEC.m
 
 Licensed under the [Mozilla Public License 2.0](./LICENSE).
 
-Tests data (https://github.com/microsoft/sql-server-samples) under the [MIT license](tests/data/license.txt)
+Test data (https://github.com/microsoft/sql-server-samples) under the [MIT license](tests/data/license.txt)
