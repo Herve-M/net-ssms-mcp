@@ -13,6 +13,13 @@ public class AspireContext
     public const string Sql2022ServerName = "2022";
     public const string Sql2025ServerName = "2025";
 
+    // Aspire resource ids (as registered in src/Server.Aspire.Host/AppHost.cs's AddSqlServer(...)
+    // calls) — distinct from the MCP server_name values above. Needed by tests that must open a
+    // raw SqlConnection directly (e.g. to seed test fixtures) rather than going through the MCP
+    // tool surface.
+    public const string Sql2022ResourceId = "sql-2022";
+    public const string Sql2025ResourceId = "sql-2025";
+
     public static readonly TimeSpan DefaultTimeout = TimeSpan.FromSeconds(30);
 
     private readonly SemaphoreSlim _startGate = new(1, 1);

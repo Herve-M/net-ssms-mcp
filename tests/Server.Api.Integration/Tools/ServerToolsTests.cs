@@ -21,7 +21,7 @@ public class ServerToolsTests(AspireContext aspireContext)
             .ListToolsAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         toolList.Select(x => x.Name)
-            .Should().BeEquivalentTo(new[] { "get_server_info", "list_databases", "list_objects" });
+            .Should().BeEquivalentTo(new[] { "get_server_info", "list_databases", "list_objects", "describe_table", "describe_view", "describe_procedure" });
     }
 
     [Theory]
