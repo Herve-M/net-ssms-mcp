@@ -2,8 +2,8 @@
 description: "REST API guidelines"
 paths:
     [
-        "**/src/Api.Server/Controllers/V*/*.cs",
-        "**/src/Api.Server/Models/API/V*/*.cs",
+        "**/src/Server.Api/Controllers/**/*.cs",
+        "**/src/Server.Api/Models/V*/*.cs",
     ]
 ---
 
@@ -11,9 +11,11 @@ paths:
 
 ## Version scoping
 
-REST API are versionized using `Asp.Versioning` package, and each controller should have an `ApiVersion` attrinute set.
+REST API are versionized using the `Asp.Versioning` package, and each controller MUST set an
+`ApiVersion` attribute. The version travels in the route template, not in the folder name.
 
-Example for 1.0, stored under `src/Api.Server/Controllers/V1/`:
+Controllers live flat under `src/Server.Api/Controllers/` — `ServersController.cs`,
+`DatabasesController.cs`. Versioning is expressed by the attribute:
 
 ```csharp
 [ApiController]
@@ -22,12 +24,13 @@ Example for 1.0, stored under `src/Api.Server/Controllers/V1/`:
 public sealed class ServersController {}
 ```
 
-Controller are stored within a version folder, following format `Vx` under `src/Api.Server/Controllers/`.
+A controller MAY override the template when it is nested under another resource — e.g.
+`DatabasesController` uses
+`[Route("api/v{version:apiVersion}/Servers/{serverName}/databases")]`.
 
-Example:
-
-- For 1.0, stored under `src/Api.Server/Controllers/V1/`
-- For 2.0, stored under `src/Api.Server/Controllers/V2/`
+> Open question: when a v2 arrives, decide whether a second `ApiVersion` attribute on the same
+> controller or a `Controllers/V2/` folder is preferred. Today only 1.0 exists and controllers
+> are flat — do not introduce version folders for controllers without agreeing that first.
 
 ## API Guidance
 
@@ -99,11 +102,15 @@ Example for `POST Database/AddDatabaseServer`:
 - Input name: `DatabaseServerAddRequest`
 - Output name: `DatabaseServerDetailsResponse`
 
-Model DTO are stored within a version folder, following format `Vx` under `src/Api.Server/Models/API/`.
+Model DTOs are stored within a version folder, following format `Vx` under `src/Server.Api/Models/`.
 
 Example:
 
-- For 1.0, stored under `src/Api.Server/Models/API/V1/`
-- For 2.0, stored under `src/Api.Server/Models/API/V2/`
+- For 1.0, stored under `src/Server.Api/Models/V1/`
+- For 2.0, stored under `src/Server.Api/Models/V2/`
+
+The surface is read-only today, so every model is a `Response`; there are no `Request` models yet.
+These records are the REST contract and are deliberately **separate** from the MCP tool payloads —
+the two surfaces share Application handlers, not DTOs.
 
 ## References

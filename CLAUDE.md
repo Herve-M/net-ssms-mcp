@@ -27,48 +27,63 @@ When referencing requirements in commits, PRs, or planning notes, cite the spec 
 
 ## Structure
 
+Every project below carries an `AGENTS.md` at its root (omitted from the tree for brevity — see
+"Documentation near code").
+
 <workspace-root>
 │
 ├── src/  # main application code, organized into layers
-│   ├── Server.Api/  # API server code
-│   │   ├── Controllers/
-│   │   ├── Models/
+│   ├── Server.Api/  # HTTP host: REST controllers + the HTTP MCP endpoint (MapMcp("/mcp"))
+│   │   ├── Controllers/  # thin; delegate to Mediator
+│   │   ├── Models/V1/  # versioned *Response records (REST contract)
+│   │   ├── configs/  # main.json — the multi-server data-source list
 │   │   ├── Program.cs
 │   │   └── ...
 │   ├── Server.Mcp/  # MCP server host (stdio); composes layers and registers tools
+│   │   ├── Cli/  # McpCliHost (composition root) + MainConfigurationFactory
+│   │   ├── RootCliCommand.cs  # --server/-s | --config/-c
+│   │   ├── .mcp/  # client registration samples
 │   │   ├── Program.cs
 │   │   ├── README.md
 │   │   └── ...
-│   ├── Server.Mcp.Shared/  # shared MCP tool classes + DI, consumed by Server.Mcp (and Server.Api)
+│   ├── Server.Mcp.Shared/  # shared MCP tool classes + DI, consumed by Server.Mcp and Server.Api
 │   │   ├── tools/  # MCP tool classes (e.g. DatabaseTools.cs)
-│   │   ├── DependencyInjection.cs
+│   │   │   └── Abstractions/  # ToolPayload, result payload records
+│   │   ├── Abstractions/  # IDefaultServerName, ServerNameResolver
+│   │   ├── DependencyInjection.cs  # AddTools(), AddDefaultServerName()
 │   │   └── ...
-│   ├── Server.Aspire.Host/  # Aspire orchestration host
+│   ├── Server.Aspire.Host/  # Aspire orchestration host (SQL 2022 + 2025, http-api, inspector)
+│   │   ├── dockers/  # sql-*.dockerfile + restore scripts
 │   │   ├── AppHost.cs
 │   │   └── ...
-│   ├── Application/  # application logic and services, divided into feature slice or domain boundaries
+│   ├── Application/  # application logic, divided into feature slices per boundary
+│   │   ├── Databases/  # one folder per slice, e.g. GetDatabaseSchemas/
+│   │   ├── Servers/
+│   │   ├── Tables/ Views/ Procedures/  # the describe family
+│   │   ├── Security/  # has its own AGENTS.md
+│   │   ├── Abstractions/  # shared contracts; Shared/ holds PageRequest + PagedResult
 │   │   ├── DependencyInjection.cs
-│   │   ├── Abstractions/  # shared interfaces and contracts
-│   │   ├── AGENTS.md
 │   │   └── ...
-│   ├── Domain/  # domain models and business logic
+│   ├── Domain/  # ports and business contracts; SMO types are the domain model
+│   │   ├── Abstractions/  # Databases/ Servers/ Security/ Configurations/ — the I…Port interfaces
+│   │   ├── Configurations/  # MainConfiguration + validator
 │   │   ├── DependencyInjection.cs
-│   │   ├── Abstractions/  # shared interfaces and contracts cross boundaries
-│   │   ├── AGENTS.md
 │   │   └── ...
 │   ├── Infrastructure/  # data access, external services, infrastructure concerns
-│   │   ├── DependencyInjection.cs
+│   │   ├── SSMS/  # …Adapter per port; Internals/ holds the connection factory
 │   │   ├── Abstractions/  # shared interfaces, contracts, base classes
-│   │   ├── SSMS/  # SQL Server / SSMS SDK client implementations/wrappers
 │   │   ├── Configurations/  # DependencyInjectionBuilder definition
+│   │   ├── DependencyInjection.cs
 │   │   └── ...
-├── tests/  # integration tests + shared fixtures
-│   ├── Infrastructure.Integration/  # infrastructure integration tests
-│   ├── Server.Api.Integration/  # API integration tests
+├── tests/  # 3 integration suites + 1 unit suite
+│   ├── Infrastructure.Integration/  # adapters vs real SQL Server (Testcontainers fixture)
+│   ├── Server.Api.Integration/  # HTTP host end-to-end (Aspire fixture)
+│   ├── Server.Mcp.Integration/  # stdio host end-to-end (Aspire fixture)
+│   ├── Server.Mcp.Shared.Unit/  # the only unit project; no SQL Server
 │   ├── data/  # test fixtures (AdventureWorks .bak backups)
 │   └── ...
-├── docs/  # documentation directories
-│   └── ...
+├── docs/  # documentation
+│   └── SPEC.md  # the normative contract
 ├── eng/  # engineering rules
 ├── scripts/  # helper scripts for build, test, deploy
 ├── ssms-mcp.slnx  # solution file
@@ -94,7 +109,25 @@ When referencing requirements in commits, PRs, or planning notes, cite the spec 
 
 ### Documentation near code
 
-LLM-optimized documentation lives in `AGENTS.md` files at the root of each layer (`Application`, `Domain`, `Infrastructure`). Each file describes that layer's purpose, its boundaries/feature-slices, and key types. Per-boundary `AGENTS.md` may be added as a layer grows.
+LLM-optimized documentation lives in `AGENTS.md` files: one at the root of **every** `src/` project (`Application`, `Domain`, `Infrastructure`, `Server.Mcp.Shared`, `Server.Mcp`, `Server.Api`, `Server.Aspire.Host`) and one at `tests/`. Each describes that project's purpose, its boundaries/feature-slices, and key types.
+
+A boundary earns its own nested `AGENTS.md` once it has **3+ feature slices or conventions that differ from its layer** — `src/Application/Security/AGENTS.md` is the worked example. Below that threshold it stays a section in the layer file.
+
+`AGENTS.md` describes **structure** — what lives here, why, and which file is the reference implementation. `.claude/rules/` prescribes **conventions** — how to write the code. When both apply, `AGENTS.md` links to the rule instead of restating it, so the two cannot drift apart.
+
+Template:
+
+```markdown
+# <Name> — AGENTS.md
+<1–3 line purpose: what this is, what it depends on, what consumes it>
+
+## Conventions          <- only what is NOT already in .claude/rules/; otherwise link
+## Boundaries           <- folder by folder: what lives there and why
+## Pattern (<name>)     <- the repeatable recipe, numbered
+<closing line naming the reference implementation file>
+```
+
+Keep them current: when a boundary, port, adapter or tool is added, update the owning `AGENTS.md` in the same change.
 
 ### Instruction files
 
