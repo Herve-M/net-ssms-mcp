@@ -96,7 +96,7 @@ jobs:
             type=sha
 
       - name: "Build multi-arch -> local registry"
-        uses: docker/build-push-action@v7.2.0
+        uses: docker/build-push-action@v7.3.0
         with:
           context: .
           file: src/Server.Api/Dockerfile
@@ -154,7 +154,7 @@ jobs:
           category: ${{ matrix.base }}-arm64
 
       - name: "Build & push multi-arch -> GHCR"
-        uses: docker/build-push-action@v7.2.0
+        uses: docker/build-push-action@v7.3.0
         with:
           context: .
           file: src/Server.Api/Dockerfile
