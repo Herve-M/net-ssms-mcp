@@ -58,7 +58,7 @@ jobs:
           comment-summary-in-pr: on-failure
 
       - name: "Set up Docker Buildx"
-        uses: docker/setup-buildx-action@v4.1.0
+        uses: docker/setup-buildx-action@v4.2.0
         with:
           driver-opts: network=host
 
