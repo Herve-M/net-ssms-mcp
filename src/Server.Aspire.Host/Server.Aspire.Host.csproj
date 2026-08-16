@@ -17,6 +17,12 @@
 
     <ItemGroup>
       <PackageReference Include="Aspire.Hosting.SqlServer" />
+      <PackageReference Include="Microsoft.Extensions.Caching.Memory" />
+      <PackageReference Include="Microsoft.Extensions.Configuration" />
+      <PackageReference Include="Microsoft.Extensions.Configuration.Json" />
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+      <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks" />
+      <PackageReference Include="Microsoft.Extensions.Hosting" />
       <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" />
       <PackageReference Include="OpenTelemetry.Extensions.Hosting" />
     </ItemGroup>
