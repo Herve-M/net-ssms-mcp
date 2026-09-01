@@ -97,7 +97,7 @@ jobs:
 
       - name: "Scan SBOM amd64 (grype, fail on CRITICAL+)"
         id: scan-amd64
-        uses: anchore/scan-action@v7.4.0
+        uses: anchore/scan-action@v7.4.2
         with:
           sbom: ${{ runner.temp }}/sbom.amd64.json
           severity-cutoff: critical
@@ -113,7 +113,7 @@ jobs:
 
       - name: "Scan SBOM arm64 (grype, fail on CRITICAL+)"
         id: scan-arm64
-        uses: anchore/scan-action@v7.4.0
+        uses: anchore/scan-action@v7.4.2
         with:
           sbom: ${{ runner.temp }}/sbom.arm64.json
           severity-cutoff: critical
