@@ -61,7 +61,7 @@ jobs:
 
       - name: "Scan SBOM"
         id: scan
-        uses: anchore/scan-action@v7.4.0
+        uses: anchore/scan-action@v7.4.2
         with:
           sbom: ${{ runner.temp }}/sbom.spdx.json
           severity-cutoff: critical
