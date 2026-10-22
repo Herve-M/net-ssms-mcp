@@ -52,7 +52,7 @@ jobs:
         run: dotnet publish src/Server.Mcp/Server.Mcp.csproj -c Release --no-restore -r linux-x64
 
       - name: "Generate SBOM"
-        uses: anchore/sbom-action@v0.24.0
+        uses: anchore/sbom-action@v0.24.2
         with:
           path: src/Server.Mcp/bin/Release/net10.0/linux-x64/publish
           format: spdx-json
