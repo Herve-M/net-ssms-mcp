@@ -12,8 +12,8 @@
     <PackageVersion Include="DotMake.CommandLine" Version="3.5.0" />
     <PackageVersion Include="DotNetDiag.HealthChecks.SqlServer" Version="10.0.14" />
     <PackageVersion Include="DotNetDiag.HealthChecks.UI.Client" Version="10.0.14" />
-    <PackageVersion Include="FluentValidation" Version="12.1.1" />
-    <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
+    <PackageVersion Include="FluentValidation" Version="12.2.0" />
+    <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="12.2.0" />
     <PackageVersion Include="Mediator.Abstractions" Version="3.0.2" />
     <PackageVersion Include="Mediator.SourceGenerator" Version="3.0.2" />
     <PackageVersion Include="Microsoft.Data.SqlClient" Version="7.0.2" />
